@@ -1,0 +1,52 @@
+#!/usr/bin/env ruby
+
+require 'pathname'
+require 'net/http'
+require 'open-uri'
+
+require_relative "../lib/card_database"
+
+db = CardDatabase.load
+db
+  .printings #.cards.map{|name, card| card.printings.filter {|c| !c.number.include? "*"}.max_by(&:release_date) or card.printings.max_by(&:release_date) } # printings
+  .map{|c| [c.name, c.set_code, c.number.to_i, c.number, c.multiverseid]}
+  .sort
+  .each do |name, set_code, num, number, multiverseid|
+    begin
+        next if Pathname("/cards_hq/#{set_code}/#{number}.png").file? or Pathname("/cards/#{set_code}/#{number}.png").file?
+        puts "#{name} [#{[set_code, number, multiverseid].compact.join(", ")}]"
+        card = JSON.parse(Net::HTTP.get(URI.parse("https://api.scryfall.com/cards/multiverse/#{multiverseid}")))
+        if !card or card['status'] == 404 then
+          begin
+            card = JSON.parse(Net::HTTP.get(URI.parse("https://api.scryfall.com/cards/#{set_code}/#{URI.escape(number)}")))
+          rescue
+            card = nil
+          end
+        end
+        if !card or card['status'] == 404 then
+          begin
+            card = JSON.parse(Net::HTTP.get(URI.parse("https://api.scryfall.com/cards/#{set_code}/#{URI.escape(number.sub(/[sp]/, ''))}")))
+          rescue
+            card = nil
+          end
+        end
+        if !card or card['status'] == 404 then
+          begin
+            card = JSON.parse(Net::HTTP.get(URI.parse("https://api.scryfall.com/cards/#{set_code}/#{URI.escape(number.sub(/p/, 's').sub(/[ab]$/, ''))}")))
+          rescue
+            card = nil
+          end
+        end
+        if !card or card['status'] == 404 then
+          card = JSON.parse(Net::HTTP.get(URI.parse("https://api.scryfall.com/cards/#{set_code}/#{num}")))
+        end
+        dst = "/cards#{if card['highres_image'] then "_hq" else "" end}/#{set_code}/#{number}.png"
+        Pathname(dst).dirname.mkpath
+        card = card['card_faces'].find {|face| face['name'] == name } if card['card_faces'] and !card['image_uris']
+        puts card unless card['image_uris']
+        IO.copy_stream(URI.open(card['image_uris']['png']), dst) if card['image_uris']
+    rescue
+        puts $!, $@
+        next
+    end
+  end

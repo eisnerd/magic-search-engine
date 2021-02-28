@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+
+require 'pathname'
+require 'net/http'
+require 'open-uri'
+
+require_relative "../lib/card_database"
+
+db = CardDatabase.load
+db
+  .cards.map{|name, card| card.printings.max_by(&:release_date) } # printings
+  .map{|c| [c.name, c.set_code, c.number.to_i, c.number, c.multiverseid]}
+  .sort
+  .each do |name, set_code, num, number, multiverseid|
+    begin
+    dst = "/cards_hq/#{set_code}/#{number}.png"
+    puts dst if Pathname(dst).file?
+    dst = "/cards/#{set_code}/#{number}.png"
+    puts dst if Pathname(dst).file?
+    rescue
+        puts $!, $@
+        next
+    end
+  end
