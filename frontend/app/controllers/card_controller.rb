@@ -59,6 +59,25 @@ class CardController < ApplicationController
 
     # End of temporary bot code
 
+    @pools = [
+      OpenStruct.new({id: 1, name: "Owned"}),
+      OpenStruct.new({id: 2, name: "Available"}),
+      OpenStruct.new({id: 3, name: "Proxied"}),
+      OpenStruct.new({id: 4, name: "Bulk"}),
+    ]
+    @formats = [
+      OpenStruct.new({id: 1, name: "Standard"}),
+      OpenStruct.new({id: 2, name: "Pioneer"}),
+      OpenStruct.new({id: 3, name: "Modern"}),
+      OpenStruct.new({id: 4, name: "Pauper"}),
+    ]
+    @sorting_orders = [
+      OpenStruct.new({id: 1, name: "Newest"}),
+      OpenStruct.new({id: 2, name: "Oldest"}),
+      OpenStruct.new({id: 3, name: "CMC asc"}),
+      OpenStruct.new({id: 4, name: "CMC dsc"}),
+      OpenStruct.new({id: 5, name: "Name"}),
+    ]
     @title = @search
     query = Query.new(@search, params[:random_seed])
     @seed = query.seed
@@ -82,9 +101,12 @@ class CardController < ApplicationController
     when "checklist"
       @cards = @cards.paginate(page: page, per_page: 500)
       render "index_checklist"
-    else
+    when "short"
       # default view
       @cards = @cards.paginate(page: page, per_page: 25)
+    else
+      @cards = @cards.paginate(page: page, per_page: 100)
+      render "index_images"
     end
   end
 

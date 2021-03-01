@@ -7,10 +7,21 @@
         .col-12
           %h1
             %a.site_logo{href: "/"}= APP_NAME
-      = form_tag("/card", method: :get, class: "search row search_form_row", enforce_utf8: false) do
-        .col-12.col-md-10
-          = text_field_tag(:q, @search, {class: 'form-control', tabindex: 1, autofocus: @empty_page, autocapitalize: "off"})
-        .col-12.col-md-2
-          = submit_tag("Search", name: nil, class: "btn btn-outline-primary")
+      = form_tag("/card", method: :get, class: "search", enforce_utf8: false) do
+        .row.search_form_row
+          .col-12.col-md-10
+            = text_field_tag(:q, @search, {class: 'form-control', tabindex: 1, autofocus: @empty_page, autocapitalize: "off"})
+          .col-12.col-md-2
+            = submit_tag("Search", name: nil, class: "btn btn-outline-primary")
+        .row.search_form_row
+          .col-12.col-md-4
+            = check_box_tag('pool')
+            = select_tag('pools', options_from_collection_for_select(@pools, "id", :name))
+          .col-12.col-md-4
+            = check_box_tag('format')
+            = select_tag('formats', options_from_collection_for_select(@formats, "id", :name))
+          .col-12.col-md-4
+            = check_box_tag('sorting')
+            = select_tag('sorting', options_from_collection_for_select(@sorting_orders, "id", :name))
       = yield
       = render "layouts/footer"
