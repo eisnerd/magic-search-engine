@@ -5,11 +5,15 @@
 	},
 	{
 		"name": "Owned",
-		"listings": ["starter decks.csv", "THB green commons.csv"]
+		"listings": ["starter decks.csv", "THB green commons.csv", "album.csv"]
 	},
 	{
 		"name": "Proxied",
 		"listings": ["Printed proxies.csv"]
+	},
+	{
+		"name": "Starter",
+		"listings": ["starter decks.csv"]
 	},
 	{
 		"name": "Bulk",
