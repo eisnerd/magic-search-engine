@@ -47,7 +47,19 @@ class CardController < ApplicationController
     @search = (params[:q] || "").strip
     page = [1, params[:page].to_i].max
 
-    unless @search.present?
+    filters = ""
+    if @_pool
+      filters << " (pool:\"#{@_pools}\") "
+    end
+    if @_format
+      filters << " (format:\"#{formats[@__formats - 1].name}\") "
+    end
+    if @_sort
+      sorting_order = sorting_orders[@_sorting_order - 1]
+      filters << " (sort:\"#{sorting_order.value}\") "
+    end
+
+    unless @search.present? || filters.present?
       @empty_page = true
       @cards = []
       return
@@ -65,22 +77,11 @@ class CardController < ApplicationController
 
     # End of temporary bot code
 
-    filters = ""
-    if @_pool
-      filters << " (pool:\"#{@_pools}\") "
-    end
-    if @_format
-      filters << " (format:\"#{formats[@__formats - 1].name}\") "
-    end
-    if @_sort
-      sorting_order = sorting_orders[@_sorting_order - 1]
-      filters << " (sort:\"#{sorting_order.value}\") "
-    end
-
     @title = @search
     query = Query.new(@search + filters, params[:random_seed])
     @seed = query.seed
     results = $CardDatabase.search(query)
+    print results.card_names
     @warnings = results.warnings
     @cards = results.card_groups.map do |printings|
       choose_best_printing(printings)
@@ -104,7 +105,7 @@ class CardController < ApplicationController
       # default view
       @cards = @cards.paginate(page: page, per_page: 25)
     else
-      @cards = @cards.paginate(page: page, per_page: 100)
+      @cards = @cards.paginate(page: page, per_page: 99)
       render "index_images"
     end
   end

@@ -3,7 +3,7 @@
     .col-12.warnings
       - @warnings.each do |warning|
         .warning= warning
-- if @search.present?
+- if !@empty_page
   = render 'summary'
   .row.multicard_row
     - @cards.each_with_index do |(card, printings), i|
