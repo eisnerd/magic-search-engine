@@ -105,6 +105,8 @@ class QueryTokenizer
         tokens << [:test, klass.new(s[2] || s[3])]
       elsif s.scan(/(?:f|format)\s*[:=]\s*(?:"(.*?)"|([\p{L}\p{Digit}_\-\*]+))/i)
         tokens << [:test, ConditionFormat.new(s[1] || s[2])]
+      elsif s.scan(/(?:p|pool)\s*[:=]\s*(?:"(.*?)"|([\p{L}\p{Digit}_\-\*]+))/i)
+        tokens << [:test, ConditionPool.new(s[1] || s[2])]
       elsif s.scan(/(?:name|n)\s*(>=|>|<=|<|=|:)\s*(?:"(.*?)"|([\p{L}\p{Digit}_\-]+))/i)
         op = s[1]
         op = "=" if op == ":"
