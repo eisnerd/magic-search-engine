@@ -38,8 +38,8 @@ class ApplicationController < ActionController::Base
     @sorting_orders ||= [
       OpenStruct.new({id: 1, name: "Newest", value: "new"}),
       OpenStruct.new({id: 2, name: "Oldest", value: "old"}),
-      OpenStruct.new({id: 3, name: "CMC asc", value: "cmc"}),
-      OpenStruct.new({id: 4, name: "CMC dsc", value: "-cmc"}),
+      OpenStruct.new({id: 3, name: "CMC asc", value: "-cmc"}),
+      OpenStruct.new({id: 4, name: "CMC dsc", value: "cmc"}),
       OpenStruct.new({id: 5, name: "Name", value: "name"}),
     ]
     end
