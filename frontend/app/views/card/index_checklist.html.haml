@@ -3,7 +3,7 @@
     .col-12.warnings
       - @warnings.each do |warning|
         .warning= warning
-- if @search.present?
+- if !@empty_page
   = render 'summary'
   %table.checklist
     %tr
