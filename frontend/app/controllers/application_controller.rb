@@ -21,4 +21,26 @@ class ApplicationController < ActionController::Base
              .to_a
              .paginate(page: page, per_page: 10)
   end
+
+  helper_method :pools, :formats, :sorting_orders
+  def pools
+    @pools ||= $CardDatabase.pools.collect.with_index
+  end
+  def formats
+    @formats ||= [
+      OpenStruct.new({id: 1, name: "Standard"}),
+      OpenStruct.new({id: 2, name: "Pioneer"}),
+      OpenStruct.new({id: 3, name: "Modern"}),
+      OpenStruct.new({id: 4, name: "Pauper"}),
+    ]
+    end
+  def sorting_orders
+    @sorting_orders ||= [
+      OpenStruct.new({id: 1, name: "Newest", value: "new"}),
+      OpenStruct.new({id: 2, name: "Oldest", value: "old"}),
+      OpenStruct.new({id: 3, name: "CMC asc", value: "cmc"}),
+      OpenStruct.new({id: 4, name: "CMC dsc", value: "-cmc"}),
+      OpenStruct.new({id: 5, name: "Name", value: "name"}),
+    ]
+    end
 end

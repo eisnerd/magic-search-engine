@@ -38,6 +38,12 @@ class CardController < ApplicationController
   # as this untested copypasta is nasty
   # FIXME: And now it's not even the same anymore
   def index
+    @_pool = params[:pool]
+    @_pools = params[:pools] || ""
+    @_format = params[:format]
+    @__formats = (params[:formats] || 0).to_i
+    @_sort = params[:sort]
+    @_sorting_order = (params[:sorting_order] || 0).to_i
     @search = (params[:q] || "").strip
     page = [1, params[:page].to_i].max
 
@@ -59,27 +65,20 @@ class CardController < ApplicationController
 
     # End of temporary bot code
 
-    @pools = [
-      OpenStruct.new({id: 1, name: "Owned"}),
-      OpenStruct.new({id: 2, name: "Available"}),
-      OpenStruct.new({id: 3, name: "Proxied"}),
-      OpenStruct.new({id: 4, name: "Bulk"}),
-    ]
-    @formats = [
-      OpenStruct.new({id: 1, name: "Standard"}),
-      OpenStruct.new({id: 2, name: "Pioneer"}),
-      OpenStruct.new({id: 3, name: "Modern"}),
-      OpenStruct.new({id: 4, name: "Pauper"}),
-    ]
-    @sorting_orders = [
-      OpenStruct.new({id: 1, name: "Newest"}),
-      OpenStruct.new({id: 2, name: "Oldest"}),
-      OpenStruct.new({id: 3, name: "CMC asc"}),
-      OpenStruct.new({id: 4, name: "CMC dsc"}),
-      OpenStruct.new({id: 5, name: "Name"}),
-    ]
+    filters = ""
+    if @_pool
+      filters << " (pool:\"#{@_pools}\") "
+    end
+    if @_format
+      filters << " (format:\"#{formats[@__formats - 1].name}\") "
+    end
+    if @_sort
+      sorting_order = sorting_orders[@_sorting_order - 1]
+      filters << " (sort:\"#{sorting_order.value}\") "
+    end
+
     @title = @search
-    query = Query.new(@search, params[:random_seed])
+    query = Query.new(@search + filters, params[:random_seed])
     @seed = query.seed
     results = $CardDatabase.search(query)
     @warnings = results.warnings
