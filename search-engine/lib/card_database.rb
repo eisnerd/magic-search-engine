@@ -21,6 +21,7 @@ require_relative "deck"
 require_relative "precon_deck"
 require_relative "deck_parser"
 require_relative "deck_database"
+require_relative "pool_database"
 require_relative "unknown_card"
 require_relative "user_deck_parser"
 
@@ -48,6 +49,7 @@ class CardDatabase
     @blocks = Set[]
     @cards = {}
     @artists = {}
+    @pools = []
     yield(self)
   end
 
@@ -70,6 +72,10 @@ class CardDatabase
 
   def decks
     @decks ||= @sets.values.flat_map(&:decks)
+  end
+
+  def pools
+    @pools
   end
 
   # We also need to include all other cards with same name from same set,
@@ -339,6 +345,7 @@ class CardDatabase
     setup_artists!
     setup_sort_index!
     DeckDatabase.new(self).load!
+    PoolDatabase.new(self).load!
     index_cards_in_precons!
   end
 
