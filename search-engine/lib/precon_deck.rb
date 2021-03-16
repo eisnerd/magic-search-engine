@@ -10,7 +10,7 @@ class PreconDeck < Deck
   end
 
   def inspect
-    "PreconDeck<#{set.name} - #{@name} - #{@type}>"
+    if set.name == "pool" then @name else "PreconDeck<#{set.name} - #{@name} - #{@type}>" end
   end
 
   def to_s
