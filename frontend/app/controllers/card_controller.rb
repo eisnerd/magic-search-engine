@@ -77,7 +77,11 @@ class CardController < ApplicationController
 
     # End of temporary bot code
 
-    @title = @search
+    @title =
+      if @search.present? then @search
+      elsif @_pool then @_pools
+      elsif @_format then formats[@@__formats - 1].name
+      end
     query = Query.new(@search + filters, params[:random_seed])
     @seed = query.seed
     results = $CardDatabase.search(query)
