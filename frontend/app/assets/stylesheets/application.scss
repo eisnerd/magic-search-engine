@@ -67,6 +67,15 @@ form.search {
   margin-bottom: 1em;
 }
 
+.search_form_row .form-check-input {
+  margin-top: 0.65em;
+}
+@media (max-width: 575px) {
+  .search_form_row .form-check-input {
+    margin-left: -1.2em;
+  }
+}
+
 .glossary_entry {
   margin-bottom: 0.5em;
   .glossary_term {

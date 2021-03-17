@@ -14,14 +14,14 @@
           .col-12.col-md-2
             = submit_tag("Search", name: nil, class: "btn btn-outline-primary")
         .row.search_form_row
-          .col-12.col-md-4
-            = check_box_tag(:pool, "1", @_pool)
-            = select_tag(:pools, options_for_select(pools, @_pools), :onchange => "document.getElementById('pool').checked = true")
-          .col-12.col-md-4
-            = check_box_tag(:format, '1', @_format)
-            = select_tag(:formats, options_from_collection_for_select(formats, "id", :name, @__formats), :onchange => "document.getElementById('format').checked = true")
-          .col-12.col-md-4
-            = check_box_tag(:sort, '1', @_sort)
-            = select_tag(:sorting_order, options_from_collection_for_select(sorting_orders, "id", :name, @_sorting_order), :onchange => "document.getElementById('sort').checked = true")
+          .col-12.col-md-4.form-check
+            = check_box_tag(:pool, "1", @_pool, {class: 'form-check-input'})
+            = select_tag(:pools, options_for_select(pools, @_pools), :class => 'form-check-label form-select', :onchange => "document.getElementById('pool').checked = true")
+          .col-12.col-md-4.form-check
+            = check_box_tag(:format, '1', @_format, {class: 'form-check-input'})
+            = select_tag(:formats, options_from_collection_for_select(formats, "id", :name, @__formats), :class => 'form-check-label form-select', :onchange => "document.getElementById('format').checked = true")
+          .col-12.col-md-4.form-check
+            = check_box_tag(:sort, '1', @_sort, {class: 'form-check-input'})
+            = select_tag(:sorting_order, options_from_collection_for_select(sorting_orders, "id", :name, @_sorting_order), :class => 'form-check-label form-select', :onchange => "document.getElementById('sort').checked = true")
       = yield
       = render "layouts/footer"
