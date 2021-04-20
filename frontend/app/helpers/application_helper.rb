@@ -1,6 +1,11 @@
 module ApplicationHelper
+  def card_tooltip(card)
+    counts = card.pool_counts.map {|p, n| "#{p}: #{n}" if n > 0 }.compact
+    if counts.length > 0 then counts.join('<br/>') else "None" end
+  end
+
   def link_to_card(card, &blk)
-    link_to(
+    link_to({
       controller: "card",
       action: "show",
       set: card.set_code,
@@ -13,6 +18,9 @@ module ApplicationHelper
                 .gsub("R&D", "RnD")
                 .gsub(/[^a-zA-Z0-9\-]+/, "-")
                 .gsub(/(\A-)|(-\z)/, ""),
+      },
+      data: { bs_toggle: 'tooltip', bs_placement: 'bottom', bs_container: 'body', bs_html: 'true' },
+      title: card_tooltip(card),
       &blk)
   end
 

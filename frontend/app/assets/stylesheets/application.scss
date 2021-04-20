@@ -247,6 +247,9 @@ form.search {
 .card_picture_cell {
   padding: 0% 2% 2% 2%;
 }
+[data-bs-original-title*=":"] div {
+    border: #0d6efd 1px solid;
+}
 /* meld and split only enabled on sm+ devices */
 
 @keyframes foil_layer_animation {

@@ -23,6 +23,7 @@ $(function () {
     $(this).closest(".decklist").find(".card_picture_cell").hide();
     $(this).closest(".decklist").find(".card_picture_cell[data-preview='"+preview_link+"']").show();
   })
+  $('[data-bs-toggle="tooltip"]').tooltip();
 
   $(".pack_selection select").select2();
 
