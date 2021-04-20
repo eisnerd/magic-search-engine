@@ -247,6 +247,10 @@ form.search {
 .card_picture_cell {
   padding: 0% 2% 2% 2%;
 }
+[data-bs-original-title*=":"] div {
+  box-shadow: 0px 0px 5px 1px gold;
+  border-radius: 4%;
+}
 /* meld and split only enabled on sm+ devices */
 
 @keyframes foil_layer_animation {

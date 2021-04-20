@@ -7,6 +7,7 @@ class CardPrinting
   # Performance cache of derived information
   attr_reader :stemmed_name, :set_code
   attr_reader :release_date_i
+  attr_accessor :pool_counts
 
   # Set by CardDatabase initialization
   attr_accessor :others, :artist, :default_sort_index, :partner
@@ -17,6 +18,7 @@ class CardPrinting
     @others = nil
     @release_date = data["release_date"] ? Date.parse(data["release_date"]) : @set.release_date
     @release_date_i = @release_date.to_i_sort
+    @pool_counts = nil
     @watermark = data["watermark"]
     @number = data["number"]
     @multiverseid = data["multiverseid"]

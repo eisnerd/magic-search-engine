@@ -23,6 +23,12 @@ $(function () {
     $(this).closest(".decklist").find(".card_picture_cell").hide();
     $(this).closest(".decklist").find(".card_picture_cell[data-preview='"+preview_link+"']").show();
   })
+  $('[data-bs-toggle="tooltip"]').tooltip();
+  window.addEventListener('touchstart', function(e) {
+    let tip = $(e.target).closest('[data-bs-toggle="tooltip"]');
+    $('[data-bs-toggle]').not(tip[0]).tooltip('hide');
+    tip.tooltip('show');
+  });
 
   $(".pack_selection select").select2();
 

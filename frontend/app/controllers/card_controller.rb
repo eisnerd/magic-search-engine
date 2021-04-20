@@ -85,7 +85,7 @@ class CardController < ApplicationController
     query = Query.new(@search + filters, params[:random_seed])
     @seed = query.seed
     results = $CardDatabase.search(query)
-    print results.card_names
+    print results.printings.each {|cp| $CardDatabase.pool_counts(cp) }
     @warnings = results.warnings
     @cards = results.card_groups.map do |printings|
       choose_best_printing(printings)
