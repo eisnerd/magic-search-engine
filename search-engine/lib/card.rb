@@ -197,6 +197,10 @@ class Card
     @last_release_date ||= @printings.map(&:release_date).compact.max
   end
 
+  def min_price_usd
+    @min_price_usd ||= @printings.map {|cp| cp.prices["usd"] if cp.prices }.compact.min
+  end
+
   def allowed_in_any_number?
     @types.include?("basic") or (
       @text and @text.include?("A deck can have any number of cards named")

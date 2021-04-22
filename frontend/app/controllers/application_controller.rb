@@ -40,7 +40,8 @@ class ApplicationController < ActionController::Base
       OpenStruct.new({id: 2, name: "Oldest", value: "old"}),
       OpenStruct.new({id: 3, name: "CMC asc", value: "-cmc"}),
       OpenStruct.new({id: 4, name: "CMC dsc", value: "cmc"}),
-      OpenStruct.new({id: 5, name: "Name", value: "name"}),
+      OpenStruct.new({id: 5, name: "Price", value: "usd"}),
+      OpenStruct.new({id: 6, name: "Name", value: "name"}),
     ]
     end
 end
