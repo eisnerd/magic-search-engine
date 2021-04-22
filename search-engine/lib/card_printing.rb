@@ -3,6 +3,7 @@ class CardPrinting
   attr_reader :watermark, :artist_name, :multiverseid, :number, :frame, :flavor, :flavor_normalized, :border
   attr_reader :rarity_code, :print_sheet, :oversized, :frame_effects, :foiling, :spotlight
   attr_reader :textless, :fullart, :buyabox, :flavor_name
+  attr_reader :prices
 
   # Performance cache of derived information
   attr_reader :stemmed_name, :set_code
@@ -51,6 +52,7 @@ class CardPrinting
     @mtgo = data["mtgo"]
     @shandalar = data["shandalar"]
     @xmage = data["xmage"]
+    @prices = data["prices"]
 
     # Performance cache
     @stemmed_name = @card.stemmed_name
@@ -118,6 +120,7 @@ class CardPrinting
     display_power display_toughness display_mana_cost
     primary? secondary? front? back? partner? allowed_in_any_number?
     commander? brawler? custom? keywords
+    min_price_usd
   ].each do |m|
     eval("def #{m}; @card.#{m}; end")
   end

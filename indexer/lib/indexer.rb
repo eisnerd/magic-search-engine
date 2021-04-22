@@ -155,6 +155,7 @@ class Indexer
       PatchUnstable,
       PatchShandalar,
       PatchXmage,
+      PatchScryfallPrices,
 
       # Patch more mtg.wtf bugs
       PatchAeLigature, # is this even needed anymore?
@@ -284,6 +285,7 @@ class Indexer
           "spotlight",
           "textless",
           "watermark",
+          "prices",
         ).compact,
       ]
     end
