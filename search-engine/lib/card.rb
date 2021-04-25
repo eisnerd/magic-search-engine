@@ -198,7 +198,7 @@ class Card
   end
 
   def min_price_usd
-    @min_price_usd ||= @printings.map {|cp| cp.prices["usd"] if cp.prices }.compact.min
+    @min_price_usd ||= @printings.flat_map {|cp| [cp.prices["usd"], cp.prices["usd_foil"]] if cp.prices }.compact.min
   end
 
   def allowed_in_any_number?
