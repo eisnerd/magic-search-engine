@@ -1,4 +1,4 @@
-APP_NAME = "mtg.wtf"
+APP_NAME = "card.uk.to"
 
 # Load the Rails application.
 require_relative "application"
