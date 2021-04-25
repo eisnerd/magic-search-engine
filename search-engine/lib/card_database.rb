@@ -97,7 +97,7 @@ class CardDatabase
   def pool_counts(card_printing)
     card_printing.pool_counts ||=
       @pools.map {|pool|
-        [pool.name, pool.cards.sum {|n, c| if c.parts.include? card_printing then n.to_i else 0 end }]
+        [pool.name, pool.cards.sum {|n, c| if c.parts.index {|p| p.card == card_printing } then n.to_i else 0 end }]
       }
   end
 
