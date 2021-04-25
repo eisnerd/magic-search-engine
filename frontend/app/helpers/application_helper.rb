@@ -1,7 +1,9 @@
 module ApplicationHelper
   def card_tooltip(card)
-    counts = card.pool_counts.map {|p, n| "#{p}: #{n}" if n > 0 }.compact
-    if counts.length > 0 then counts.join('<br/>') else "None" end
+    counts = card.pool_counts.map {|p, n| "#{p}: #{n}" if n > 0 }.compact if card.pool_counts
+    tip = if counts && counts.length > 0 then counts.join('<br/>') else "None" end
+    tip << "<br/>$%.2f"  % card.min_price_usd.to_s if card.min_price_usd
+    tip
   end
 
   def link_to_card(card, &blk)
