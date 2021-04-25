@@ -1,4 +1,7 @@
 module ApplicationHelper
+  @@offsite_url = "https://eisd.uk.to"
+  @@offsite_list = nil
+
   def card_tooltip(card)
     counts = card.pool_counts.map {|p, n| "#{p}: #{n}" if n > 0 }.compact if card.pool_counts
     tip = if counts && counts.length > 0 then counts.join('<br/>') else "None" end
@@ -157,21 +160,34 @@ module ApplicationHelper
     self.card_picture_path_hq(card) or self.card_picture_path_lq(card)
   end
 
+  def self.load_offsite_list()
+    @@offsite_list = {}
+    File.foreach("offsite.list") {|file|
+      @@offsite_list[file.chop] = true
+    }
+  end
+
   def self.card_picture_path_hq(card)
+    self.load_offsite_list() unless @@offsite_list
     url_hq = "/cards_hq/#{card.set_code}/#{card.number}.png"
+    return @@offsite_url + url_hq if @@offsite_list[url_hq]
     path_hq = Pathname(__dir__) + "../../public#{url_hq}"
     return url_hq if path_hq.exist?
     url_hq = "/cards_hq/#{card.set_code}/#{card.number}.webp"
+    return @@offsite_url + url_hq if @@offsite_list[url_hq]
     path_hq = Pathname(__dir__) + "../../public#{url_hq}"
     return url_hq if path_hq.exist?
     nil
   end
 
   def self.card_picture_path_lq(card)
+    self.load_offsite_list() unless @@offsite_list
     url_lq = "/cards/#{card.set_code}/#{card.number}.png"
+    return @@offsite_url + url_lq if @@offsite_list[url_lq]
     path_lq = Pathname(__dir__) + "../../public#{url_lq}"
     return url_lq if path_lq.exist?
     url_lq = "/cards/#{card.set_code}/#{card.number}.webp"
+    return @@offsite_url + url_lq if @@offsite_list[url_lq]
     path_lq = Pathname(__dir__) + "../../public#{url_lq}"
     return url_lq if path_lq.exist?
     nil
