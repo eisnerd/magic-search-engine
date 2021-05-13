@@ -22,5 +22,9 @@
 	{
 		"name": "Bulk",
 		"listings": ["album.csv"]
+	},
+	{
+		"name": "Arena",
+		"listings": ["arena.csv"]
 	}
 ]
