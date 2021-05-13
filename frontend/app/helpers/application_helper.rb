@@ -3,7 +3,7 @@ module ApplicationHelper
   @@offsite_list = nil
 
   def card_tooltip(card)
-    counts = card.pool_counts.map {|p, n| "#{p}: #{n}" if n > 0 }.compact if card.pool_counts
+    counts = card.pool_counts.map {|p, n| (if p == "Arena" then "#{p}&#xa789; #{n}" else "#{p}: #{n}" end) if n > 0 }.compact if card.pool_counts
     tip = if counts && counts.length > 0 then counts.join('<br/>') else "None" end
     tip << "<br/>$%.2f"  % card.min_price_usd.to_s if card.min_price_usd
     tip
