@@ -92,6 +92,13 @@ describe "CLI Frontend" do
         Flying
         When Destructor Dragon dies, destroy target noncreature permanent.
         4/4
+
+        Green Dragon {4}{g}{g}
+        [afr afr]
+        Creature - Dragon
+        Flying
+        Poison Breath — When Green Dragon enters the battlefield, until end of turn, whenever a creature an opponent controls is dealt damage, destroy it.
+        4/4
         EOF
       error: ""
     )
@@ -137,7 +144,7 @@ describe "CLI Frontend" do
       verbose: true,
       output: <<-EOF,
         Steam Vents
-        [gpt rtr exp grn pgrn prm]
+        [gpt rtr exp grn pgrn prm sld]
         Land - Island Mountain
         ({T}: Add {U} or {R}.)
         As Steam Vents enters the battlefield, you may pay 2 life. If you don't, it enters the battlefield tapped.

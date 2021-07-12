@@ -161,7 +161,7 @@ class QueryTokenizer
         rescue
           @warnings << "unknown rarity: #{rarity}"
         end
-      elsif s.scan(/(pow|power|loy|loyalty|tou|toughness|cmc|year)\s*(>=|>|<=|<|=|:)\s*(pow\b|power\b|tou\b|toughness\b|cmc\b|loy\b|loyalty\b|year\b|[²\d\.\-\*\+½x∞\?]+)/i)
+      elsif s.scan(/(pow|power|loy|loyalty|tou|toughness|cmc|mv|year)\s*(>=|>|<=|<|=|:)\s*(pow\b|power\b|tou\b|toughness\b|cmc\b|mv\b|loy\b|loyalty\b|year\b|[²\d\.\-\*\+½x∞\?]+)/i)
         aliases = {"power" => "pow", "loyalty" => "loy", "toughness" => "tou"}
         a = s[1].downcase
         a = aliases[a] || a
@@ -201,7 +201,7 @@ class QueryTokenizer
         cond = s[1].capitalize
         klass = Kernel.const_get("ConditionHas#{cond}")
         tokens << [:test, klass.new]
-      elsif s.scan(/(is|not|layout)\s*[:=]\s*(normal|leveler|vanguard|dfc|double-faced|modal-dfc|modaldfc|mdfc|transform|token|split|flip|plane|scheme|phenomenon|meld|aftermath|adventure|saga|planar|augment|host)\b/i)
+      elsif s.scan(/(is|not|layout)\s*[:=]\s*(normal|leveler|vanguard|dfc|double-faced|modal-dfc|modaldfc|mdfc|transform|token|split|flip|plane|scheme|phenomenon|meld|aftermath|adventure|saga|planar|augment|host|class)\b/i)
         tokens << [:not] if s[1].downcase == "not"
         kind = s[2].downcase
         kind = "double-faced" if kind == "transform"

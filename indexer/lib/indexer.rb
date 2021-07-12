@@ -120,12 +120,10 @@ class Indexer
 
       # All cards absolutely need unique numbers
       PatchMultipartCardNumbers,
-      PatchUseFallbackNumbers,
       PatchVerifyCollectorNumbers,
 
       # Normalize data into more convenient form
       PatchNormalizeColors,
-      PatchLoyaltySymbol,
       PatchDisplayPowerToughness,
       PatchNormalizeReleaseDate,
       PatchManaCost,
@@ -155,6 +153,7 @@ class Indexer
       PatchUnstable,
       PatchShandalar,
       PatchXmage,
+      PatchCommander,
       PatchScryfallPrices,
 
       # Patch more mtg.wtf bugs
@@ -228,8 +227,10 @@ class Indexer
     printing_data = []
     card.each do |printing|
       common_card_data << printing.slice(
+        "brawler",
         "cmc",
         "colors",
+        "commander",
         "display_power",
         "display_toughness",
         "foreign_names",

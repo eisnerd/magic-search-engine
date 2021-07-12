@@ -72,6 +72,10 @@ describe "Foils" do
       next if set.types.include?("token")
 
       case set.code
+      when "ha1", "ha2", "ha3", "ha4", "ha5"
+        # Does it even matter on Arena
+      when "htr16", "htr17", "htr18", "htr19"
+        # Does it even matter?
       when "g17", "g18", "fmb1"
         assert_foiling(set.printings, "foilonly")
       when "phuk", "arn", "mir", "drk", "atq", "4ed", "mb1"
@@ -254,11 +258,22 @@ describe "Foils" do
         booster_cards, extra_cards = set.printings.partition(&:in_boosters?)
         assert_foiling(extra_cards, "foilonly")
         assert_foiling(booster_cards, "both")
-      when "sta", "stx"
+      when "stx"
         # so says mtgjson
         assert_foiling(set.printings, "both")
+      when "sta"
+        # so says mtgjson
+        normal_cards, extra_cards = set.printings.partition{|c| c.number !~ /e/}
+        assert_foiling(normal_cards, "both")
+        assert_foiling(extra_cards, "foilonly")
       when "c21"
         warn "C21 mtgjson foiling data is not fixed yet"
+      when "2xm"
+        promo_cards, regular_cards = set.printings.partition{|c| c.number == "383" }
+        assert_foiling(promo_cards, "foilonly")
+        assert_foiling(regular_cards, "both")
+      when "afr"
+        warn "afr foiling: how it even works?"
       else
         assert_by_type(set)
       end

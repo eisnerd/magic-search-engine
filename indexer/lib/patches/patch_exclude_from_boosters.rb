@@ -89,12 +89,17 @@ class PatchExcludeFromBoosters < Patch
       "tsr"
       # no weird cards in boosters and we can rely on mtgjson data
       number_i > base_size
+    when "mh2"
+      # incorrect in mtgjson
+      number_i > 303
     when "stx"
       # incorrect in mtgjson
       number_i > 275
+    when "afr"
+      number_i > 281 or number =~ /★/
     when "sta"
       # incorrect in mtgjson
-      number_i > 63
+      number_i > 63 or number =~ /e/
     when "m21"
       # showcase basics actually in boosters
       number_i > base_size and not (309..313).include?(number_i)

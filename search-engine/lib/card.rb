@@ -5,56 +5,104 @@ require_relative "ban_list"
 require_relative "legality_information"
 
 class Card
-  ABILITY_WORD_LIST = [
-    "Adamant",
-    "Addendum",
-    "Battalion",
-    "Bloodrush",
-    "Channel",
-    "Chroma",
-    "Cohort",
-    "Constellation",
-    "Converge",
-    "Council's dilemma",
-    "Delirium",
-    "Domain",
-    "Eminence",
-    "Enrage",
-    "Fateful hour",
-    "Ferocious",
-    "Formidable",
-    "Gotcha",
-    "Grandeur",
-    "Hellbent",
-    "Hero's Reward",
-    "Heroic",
-    "Imprint",
-    "Inspired",
-    "Join forces",
-    "Kinfall",
-    "Kinship",
-    "Landfall",
-    "Landship",
-    "Legacy",
-    "Lieutenant",
-    "Magecraft",
-    "Metalcraft",
-    "Morbid",
-    "Parley",
-    "Radiance",
-    "Raid",
-    "Rally",
-    "Requirement",
-    "Revolt",
-    "Spell mastery",
-    "Strive",
-    "Sweep",
-    "Tempting offer",
-    "Threshold",
-    "Underdog",
-    "Undergrowth",
-    "Will of the council",
-  ]
+  ABILITY_WORD_LIST = (
+    [
+      "Adamant",
+      "Addendum",
+      "Battalion",
+      "Bloodrush",
+      "Channel",
+      "Chroma",
+      "Cohort",
+      "Constellation",
+      "Converge",
+      "Council's dilemma",
+      "Delirium",
+      "Domain",
+      "Eminence",
+      "Enrage",
+      "Fateful hour",
+      "Ferocious",
+      "Formidable",
+      "Gotcha",
+      "Grandeur",
+      "Hellbent",
+      "Hero's Reward",
+      "Heroic",
+      "Imprint",
+      "Inspired",
+      "Join forces",
+      "Kinfall",
+      "Kinship",
+      "Landfall",
+      "Landship",
+      "Legacy",
+      "Lieutenant",
+      "Magecraft",
+      "Metalcraft",
+      "Morbid",
+      "Parley",
+      "Radiance",
+      "Raid",
+      "Rally",
+      "Requirement",
+      "Revolt",
+      "Spell mastery",
+      "Strive",
+      "Sweep",
+      "Tempting offer",
+      "Threshold",
+      "Underdog",
+      "Undergrowth",
+      "Will of the council",
+    ] + [
+      # AFR flavor words
+      "Acid Breath",
+      "Animate Walking Statue",
+      "Beacon of Hope",
+      "Bear Form",
+      "Bewitching Whispers",
+      "Binding Contract",
+      "Circle of Death",
+      "Climb Over",
+      "Cold Breath",
+      "Combat Inspiration",
+      "Cone of Cold",
+      "Cunning Action",
+      "Dark One's Own Luck",
+      "Displacement",
+      "Dissolve",
+      "Divine Intervention",
+      "Dominate Monster",
+      "Drag Below",
+      "Engulf",
+      "Fire Breath",
+      "Flurry of Blows",
+      "Grant an Advantage",
+      "Keen Senses",
+      "Life Drain",
+      "Lightning Breath",
+      "Mage Hand",
+      "Pack tactics",
+      "Poison Breath",
+      "Psionic Spells",
+      "Rappel Down",
+      "Rejuvenation",
+      "Search the Room",
+      "Siege Monster",
+      "Sneak Attack",
+      "Split",
+      "Stunning Strike",
+      "Tail Spikes",
+      "Teleport",
+      "Tie Up",
+      "Tragic Backstory",
+      "Ward",
+      "Whirlwind",
+      "Whispers of the Grave",
+      "Wild Magic Surge",
+    ]
+  ).sort
   ABILITY_WORD_RX = %r[^(#{Regexp.union(ABILITY_WORD_LIST)}) —]i
 
   attr_reader :data, :printings
@@ -65,6 +113,7 @@ class Card
   attr_reader :hand, :life, :rulings, :foreign_names, :foreign_names_normalized, :stemmed_name
   attr_reader :mana_hash, :typeline, :funny, :color_indicator, :color_indicator_set, :related
   attr_reader :reminder_text, :augment, :display_power, :display_toughness, :display_mana_cost, :keywords
+  attr_reader :commander, :brawler
 
   def initialize(data)
     @printings = []
@@ -102,6 +151,8 @@ class Card
     @rulings = data["rulings"]
     @secondary = data["secondary"]
     @partner = data["is_partner"]
+    @commander = data["commander"]
+    @brawler = data["brawler"]
     if data["foreign_names"]
       @foreign_names = data["foreign_names"].map{|k,v| [k.to_sym,v]}.to_h
     else
@@ -208,21 +259,11 @@ class Card
   end
 
   def commander?
-    return false if @secondary
-    return true if @types.include?("legendary") and @types.include?("creature")
-    if @types.include?("planeswalker")
-      return true if @text.include?("can be your commander")
-    end
-    if @types.include?("saga")
-      return true if @text.include?("can be your commander")
-    end
-    false
+    !!@commander
   end
 
   def brawler?
-    return false if @secondary
-    return true if @types.include?("legendary") and (@types.include?("creature") or @types.include?("planeswalker"))
-    false
+    !!@brawler
   end
 
   private
@@ -320,6 +361,8 @@ class Card
         ci << $1 << $2
       when "chaos"
         # planechase special symbol, disregard
+      when "+1"
+        # loyaty symbol, on Carth the Lion
       else
         raise "Unknown mana symbol `#{sym}'"
       end

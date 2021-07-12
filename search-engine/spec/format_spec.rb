@@ -7,7 +7,7 @@ describe "Formats" do
     assert_search_equal "f:standard", "legal:standard"
     assert_search_results "f:extended" # Does not exist according to mtgjson
     assert_search_equal_cards "f:standard",
-      %[e:eld,thb,iko,m21,znr,khm,stx
+      %[e:eld,thb,iko,m21,znr,khm,stx,afr
       -(Cauldron Familiar)
       -(Fires of Invention)
       -(Oko Thief of Crowns)
@@ -211,7 +211,7 @@ describe "Formats" do
 
   it "historic" do
     # including STA pre-banned
-    assert_count_cards "banned:historic", 19
+    assert_count_cards "banned:historic", 20
   end
 
   it "premodern" do

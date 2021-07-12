@@ -6,8 +6,8 @@ describe "Full Database Test" do
   # by changes which are not expected to, like updating to new mtgjson data
   # for same sets, indexer changes etc.
   it "stats" do
-    db.number_of_cards.should eq(22451)
-    db.number_of_printings.should eq(56038)
+    db.number_of_cards.should eq(22968)
+    db.number_of_printings.should eq(57648)
   end
 
   # I'm not even sure what good this test does, delete?
@@ -15,7 +15,7 @@ describe "Full Database Test" do
     # it's not totally clear what counts as "promo"
     # and different engines return different results
     # It might be a good idea to sort out edge cases someday
-    assert_count_printings "is:promo", 5368
+    assert_count_printings "is:promo", 5698
   end
 
   it "block codes" do
@@ -195,6 +195,7 @@ describe "Full Database Test" do
       "Island",
       "Mana Breach",
       "Memory Lapse",
+      "Mother of Runes",
       "Mountain",
       "Mulch",
       "Path to Exile",
@@ -210,6 +211,7 @@ describe "Full Database Test" do
       "Twiddle",
       "Wall of Wood",
       "Wanderlust",
+      "Wonder",
       "Wood Elves",
       "Youthful Knight"
   end
@@ -239,7 +241,6 @@ describe "Full Database Test" do
   it "alt rarity" do
     assert_search_include "r:common alt:r:uncommon", "Doom Blade"
     assert_search_results "r:common -is:digital alt:(r:mythic -is:digital)",
-      "Boil",
       "Cabal Ritual",
       "Capsize",
       "Chain Lightning",
@@ -255,7 +256,6 @@ describe "Full Database Test" do
       "Insectile Aberration",
       "Kird Ape",
       "Lotus Petal",
-      "Meekstone",
       "Ornithopter",
       "Spell Pierce"
   end
@@ -281,7 +281,7 @@ describe "Full Database Test" do
   end
 
   it "loy:special" do
-    assert_search_results "loy=0", "Jeska, Thrice Reborn"
+    assert_search_results "loy=0", "Jeska, Thrice Reborn", "Dakkon, Shadow Slayer"
     assert_search_equal "loy=x", "loy=X"
     assert_search_results "loy=x", "Nissa, Steward of Elements"
   end
