@@ -13,7 +13,7 @@ db
   .sort
   .each do |name, set_code, num, number, multiverseid|
     begin
-        next if Pathname("/cards_hq/#{set_code}/#{number}.png").file? or Pathname("/cards/#{set_code}/#{number}.png").file?
+        next if Pathname("/cards_hq/#{set_code}/#{number}.png").file?
         puts "#{name} [#{[set_code, number, multiverseid].compact.join(", ")}]"
         card = JSON.parse(Net::HTTP.get(URI.parse("https://api.scryfall.com/cards/multiverse/#{multiverseid}")))
         if !card or card['status'] == 404 then
@@ -40,11 +40,13 @@ db
         if !card or card['status'] == 404 then
           card = JSON.parse(Net::HTTP.get(URI.parse("https://api.scryfall.com/cards/#{set_code}/#{num}")))
         end
+        next if Pathname("/cards/#{set_code}/#{number}.png").file? and not card['highres_image']
         dst = "/cards#{if card['highres_image'] then "_hq" else "" end}/#{set_code}/#{number}.png"
         Pathname(dst).dirname.mkpath
         card = card['card_faces'].find {|face| face['name'] == name } if card['card_faces'] and !card['image_uris']
         puts card unless card['image_uris']
         IO.copy_stream(URI.open(card['image_uris']['png']), dst) if card['image_uris']
+        Pathname("/cards/#{set_code}/#{number}.png").delete if Pathname("/cards/#{set_code}/#{number}.png").file? and card['highres_image']
     rescue
         puts $!, $@
         next
