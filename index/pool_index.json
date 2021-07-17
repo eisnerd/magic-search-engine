@@ -16,6 +16,10 @@
 		"listings": ["starter decks.csv"]
 	},
 	{
+		"name": "Matthew",
+		"listings": ["matthew.csv"]
+	},
+	{
 		"name": "Cube",
 		"listings": ["WBG Cube for Four 20-Mar-2021.csv"]
 	},
