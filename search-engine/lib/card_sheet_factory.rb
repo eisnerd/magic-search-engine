@@ -278,6 +278,10 @@ class CardSheetFactory
     from_query("e:cmb1")
   end
 
+  def mb1_playtest2
+    from_query("e:cmb2")
+  end
+
   def explicit_sheet(set_code, print_sheet_code, foil: false)
     cards = @db.sets[set_code].printings.select{|c| c.in_boosters? and c.print_sheet&.include?(print_sheet_code) }
     groups = cards.group_by{|c| c.print_sheet[/#{print_sheet_code}(\d+)/, 1].to_i }
@@ -313,7 +317,8 @@ class CardSheetFactory
   end
 
   def unhinged_foil_rares
-    from_query("e:unh r>=rare", 40+1, foil: true)
+    # Super Secret Tech is 141/140
+    from_query("e:unh r>=rare", 40+1, foil: true, extra: true)
   end
 
   def unhinged_foil
@@ -375,6 +380,14 @@ class CardSheetFactory
     )
   end
 
+  def dfc_uncommon(set_code)
+    from_query("e:#{set_code} r:uncommon (is:dfc or is:meld or is:modaldfc)")
+  end
+
+  def dfc_common(set_code)
+    from_query("e:#{set_code} r:common (is:dfc or is:meld or is:modaldfc)")
+  end
+
   def sfc_common(set_code)
     from_query("e:#{set_code} r:common -is:dfc -is:meld -is:modaldfc", kind: ColorBalancedCardSheet)
   end
@@ -387,6 +400,13 @@ class CardSheetFactory
     mix_sheets(
       [from_query("e:#{set_code} r:rare -is:dfc -is:meld -is:modaldfc"), 2],
       [from_query("e:#{set_code} r:mythic -is:dfc -is:meld -is:modaldfc"), 1],
+    )
+  end
+
+  def dfc_rare_mythic(set_code)
+    mix_sheets(
+      [from_query("e:#{set_code} r:rare (is:dfc or is:meld or is:modaldfc)"), 2],
+      [from_query("e:#{set_code} r:mythic (is:dfc or is:meld or is:modaldfc)"), 1],
     )
   end
 

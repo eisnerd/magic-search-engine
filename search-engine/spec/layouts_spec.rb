@@ -16,8 +16,11 @@ describe "Card layouts" do
     end
   end
 
-  it "layout aliases" do
-    assert_search_equal "is:dfc", "layout:dfc"
+  it "is:dfc" do
+    assert_search_equal "is:dfc", "layout:transform or layout:mdfc or layout:meld"
+    assert_search_equal "is:sfc", "-is:dfc"
+    assert_search_equal "is:sfc", "is:single-faced"
+    assert_search_equal "is:dfc", "is:double-faced"
   end
 
   it "rules" do
@@ -33,7 +36,7 @@ describe "Card layouts" do
     assert_search_equal "layout:meld", "// (// o:meld)"
     assert_search_equal "layout:saga", "t:saga"
     assert_search_equal "layout:adventure", "t:adventure or (// t:adventure)"
-    assert_search_equal "layout:modaldfc -e:pmei,slu", "// e:znr,pznr,khm,pkhm,stx,pstx"
+    assert_search_equal "layout:modaldfc -e:pmei,slu,j21,prm", "// e:znr,pznr,khm,pkhm,stx,pstx"
 
     # Alias
     assert_search_equal "layout:mdfc", "layout:modaldfc"

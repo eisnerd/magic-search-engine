@@ -28,6 +28,8 @@ class FormatPioneer < Format
       "khm",
       "stx",
       "afr",
+      "mid",
+      "vow",
     ]
   end
 end

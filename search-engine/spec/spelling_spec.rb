@@ -44,7 +44,7 @@ describe "Spelling" do
     spelling_suggestions("7").should eq([])
     spelling_suggestions("77").should eq([])
     # 3-4 letters - 1 correction
-    spelling_suggestions("mux").should eq(["lux", "mox", "mu", "mul"])
+    spelling_suggestions("mux").should eq(["lux", "max", "mox", "mu", "mul"])
     spelling_suggestions("xxx").should eq([])
     # size applied after unicode normalization
     spelling_suggestions("aethr").should eq(["aether"])
@@ -79,6 +79,8 @@ describe "Spelling" do
       next if name == "Palladia-Mors"
       next if name == "Armored Wolf-Rider"
       next if name == "Silumgar Spell-Eater"
+      next if name == "Prosper, Tome-Bound" # Tomebound Lich is a card name
+      next if name == "Yuan-Ti Fang-Blade" # Fangblade are card names too
       # Too complex
       next if name == "Death's-Head Buzzard"
       # I don't even

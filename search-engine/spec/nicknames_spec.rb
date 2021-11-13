@@ -211,14 +211,13 @@ describe "Card nicknames" do
       "Needle Spires",
       "Raging Ravine",
       "Shambling Vent",
-      "Sorrow's Path",
       "Spawning Pool",
       "Stalking Stones",
       "Stirring Wildwood",
       "Svogthos, the Restless Tomb",
       "Treetop Village",
       "Wandering Fumarole"
-    assert_search_equal "is:manland", "t:land o:becomes o:creature -(Tyrite Sanctum)"
+    assert_search_equal "is:manland", "t:land o:becomes o:creature -(Tyrite Sanctum) -(Sorrow's Path)"
     assert_search_equal "is:manland", "is:creatureland"
   end
 
@@ -375,6 +374,7 @@ describe "Card nicknames" do
       "Greater Morphling",
       "Kathril, Aspect Warper",
       "Majestic Myriarch",
+      "Odric, Blood-Cursed",
       "Odric, Lunarch Marshal",
       "Rayami, First of the Fallen",
       "Selective Adaptation",
@@ -413,5 +413,22 @@ describe "Card nicknames" do
       "Jihad",
       "Pradesh Gypsies",
       "Stone-Throwing Devils"
+  end
+
+  it "is:masterpiece" do
+    assert_search_equal "is:masterpiece", "st:masterpiece"
+  end
+
+  it "is:cycleland" do
+    assert_search_results "is:cycleland",
+      "Canyon Slough",
+      "Fetid Pools",
+      "Irrigated Farmland",
+      "Scattered Groves",
+      "Sheltered Thicket"
+
+    assert_search_equal "is:cycleland", 't:land o:"cycling {2}" (t:plains or t:island or t:swamp or t:mountain or t:forest)'
+    assert_search_equal "is:cycleland", "is:bicycleland"
+    assert_search_equal "is:cycleland", "is:bikeland"
   end
 end

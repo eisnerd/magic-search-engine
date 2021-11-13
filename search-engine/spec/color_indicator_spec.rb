@@ -20,7 +20,11 @@ describe "Color Indicator Test" do
       "Resurgent Belief"
     assert_search_results "ind:rg",
       "Arlinn, Embraced by the Moon",
+      "Arlinn, the Moon's Fury",
+      "Lord of the Ulvenwald",
       "Ravager of the Fells",
+      "Savage Packmate",
+      "Tovolar, the Midnight Scourge",
       "Ulrich, Uncontested Alpha"
     assert_search_equal "ind:gr", "ind:rg"
     assert_search_equal "ind:grrgr", "ind:rg"

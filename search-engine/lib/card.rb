@@ -17,6 +17,7 @@ class Card
       "Constellation",
       "Converge",
       "Council's dilemma",
+      "Coven",
       "Delirium",
       "Domain",
       "Eminence",
@@ -50,6 +51,7 @@ class Card
       "Spell mastery",
       "Strive",
       "Sweep",
+      "Teamwork",
       "Tempting offer",
       "Threshold",
       "Underdog",
@@ -79,10 +81,12 @@ class Card
       "Fire Breath",
       "Flurry of Blows",
       "Grant an Advantage",
+      "Invoke Duplicity",
       "Keen Senses",
       "Life Drain",
       "Lightning Breath",
       "Mage Hand",
+      "Magical Tinkering",
       "Pack tactics",
       "Poison Breath",
       "Psionic Spells",
@@ -97,10 +101,42 @@ class Card
       "Teleport",
       "Tie Up",
       "Tragic Backstory",
-      "Ward",
       "Whirlwind",
       "Whispers of the Grave",
       "Wild Magic Surge",
+    ] + [
+      # AFR Dungeon Rooms
+      "Cave Entrance",
+      "Cradle of the Death God",
+      "Dark Pool",
+      "Deep Mines",
+      "Dungeon Level",
+      "Fungi Cavern",
+      "Goblin Bazaar",
+      "Goblin Lair",
+      "Lost Level",
+      "Mad Wizard's Lair",
+      "Mine Tunnels",
+      "Muiral's Graveyard",
+      "Oubliette",
+      "Runestone Caverns",
+      "Sandfall Cell",
+      "Storeroom",
+      "Temple of Dumathoin",
+      "Trapped Entry",
+      "Twisted Caverns",
+      "Veils of Fear",
+      "Yawning Portal",
+    ] + [
+      # AFC flavor words
+      "Astral Projection",
+      "Berserk",
+      "Create Undead",
+      "Focus Beam",
+      "Mystic Arcanum",
+      "Negative Energy Cone",
+      "Pact Boon",
+      "Perfect Illumination",
     ]
   ).sort
   ABILITY_WORD_RX = %r[^(#{Regexp.union(ABILITY_WORD_LIST)}) —]i
@@ -266,6 +302,22 @@ class Card
     !!@brawler
   end
 
+  def count_prints
+    @count_prints ||= printings.size
+  end
+
+  def count_paperprints
+    @count_paperprints ||= printings.select(&:paper?).size
+  end
+
+  def count_sets
+    @count_sets ||= printings.map(&:set).uniq.size
+  end
+
+  def count_papersets
+    @count_papersets ||= printings.select(&:paper?).map(&:set).uniq.size
+  end
+
   private
 
   def calculate_mana_hash
@@ -323,6 +375,8 @@ class Card
       case val
       when "*", "*²", "1+*", "2+*", "7-*", "X", "∞", "?", "1d4+1"
         val
+      when "*+1"
+        "1+*"
       else
         raise "Unrecognized value #{val.inspect}"
       end

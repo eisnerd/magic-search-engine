@@ -236,6 +236,16 @@ class PackFactory
       "thb",
       "afr"
       build_pack_with_random_foil(set_code, 1/3r, :foil, :common, {basic: 1, common: 10, uncommon: 3, rare_mythic: 1}, common_if_no_basic: true)
+    when "mid", "vow"
+      WeightedPack.new(
+        build_pack_with_random_foil(set_code, 1/3r, :foil, :sfc_common, {basic: 1, sfc_common: 9, dfc_common: 1, sfc_uncommon: 2, dfc_uncommon: 1, sfc_rare_mythic: 1}) => 5,
+        build_pack_with_random_foil(set_code, 1/3r, :foil, :sfc_common, {basic: 1, sfc_common: 9, dfc_common: 1, sfc_uncommon: 3, dfc_rare_mythic: 1}) => 1,
+      )
+    when "mid-arena", "vow-arena"
+      WeightedPack.new(
+        build_pack(set_code, {sfc_common: 9, dfc_common: 1, sfc_uncommon: 2, dfc_uncommon: 1, sfc_rare_mythic: 1}) => 5,
+        build_pack(set_code, {sfc_common: 9, dfc_common: 1, sfc_uncommon: 3, dfc_rare_mythic: 1}) => 1,
+      )
     when "m19"
       # According to The Collation Project, if pack has DFC (at least nonfoil), it will have checklist card in land slot
       # We do not simulate this
@@ -466,6 +476,24 @@ class PackFactory
         mb1_old_frame: 1,
         mb1_rare: 1,
         mb1_playtest: 1,
+      })
+    when "cmb2"
+      build_pack(set_code, {
+        mb1_white_a: 1,
+        mb1_white_b: 1,
+        mb1_blue_a: 1,
+        mb1_blue_b: 1,
+        mb1_black_a: 1,
+        mb1_black_b: 1,
+        mb1_red_a: 1,
+        mb1_red_b: 1,
+        mb1_green_a: 1,
+        mb1_green_b: 1,
+        mb1_multicolor: 1,
+        mb1_colorless: 1,
+        mb1_old_frame: 1,
+        mb1_rare: 1,
+        mb1_playtest2: 1,
       })
     when "ala-premium"
       build_pack(set_code, {

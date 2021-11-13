@@ -330,11 +330,13 @@
       = search_help "is:painland", "all 10 painlands"
       = search_help "is:shadowland", "all 5 shadowlands"
       = search_help "is:storageland", "all 12 storagelands"
+      = search_help "is:cycleland", "all 5 cycling dual lands"
       = search_help "is:triland", "all 10 tri-colored lands that enter the battlefield tapped"
       = search_help "is:triome", "all 5 triomes"
       = search_help "is:augment", "all 13 augment cards from Unstable"
       = search_help "is:keywordsoup", "cards that list a large number of keywords"
       = search_help "is:ante", "cards that involve ante"
+      = search_help "is:masterpiece", "Masterpiece cards"
 
     %h4 Search by reserved list status
     %ul
@@ -347,12 +349,15 @@
       = search_help "layout:normal", "cards with normal layout"
       = search_help "layout:leveler", "cards with leveler layout"
       = search_help "layout:vanguard", "cards with vanguard layout"
-      = search_help "layout:dfc", "cards with dfc layout"
+      = search_help "layout:transform", "cards with transform double-faced layout"
+      = search_help "layout:modaldfc", "cards with modal double-faced layout"
       = search_help "layout:split", "cards with split layout"
       = search_help "layout:aftermath", "cards with aftermath layout"
       = search_help "layout:flip", "cards with flip layout"
       = search_help "layout:planar", "cards with planar layout (plane or phenomenon)"
       = search_help "layout:scheme", "cards with scheme layout"
+      = search_help "is:dfc", "double-faced cards (transform, meld, or modal)"
+      = search_help "is:sfc", "single-faced cards"
 
     %h4 Search by printing time
     %div For printing time you can use set code, set name, or full date in more or less any format as long as it includes 4-digit year somewhere.
@@ -366,8 +371,15 @@
       = search_help "lastprint=m10", "cards last printed in Magic 2010 set"
       = search_help "lastprint<lw", "cards last printed in in Lorwyn set or earlier"
 
-    %h4 Search by other part
-    %div Every card part (of split, flip, or double-faced card) is treated as separate object, so search like mv=2 mv=3 won't return anything, as no part has mana value of 2 and 3 simultaneously. There's special syntax for that.
+    %h4 Search by number of printings
+    %div If you want to search for cards that had a lot of printings, or were printed in a lot of sets, you can use these operators
+    %div Foil and nonfoil aren't counted separately except when foil version has a different art.
+    %div Due to inclusion of some misprints and other special printings in the database, and due to different ways of interpretting what counts as a promo "set", these queries don't always have "objective" answers.
+    %ul
+      = search_help "prints=7", "cards with exactly 7 different printings"
+      = search_help "paperprints=7", "cards with exactly 7 different paper printings"
+      = search_help "sets=7", "cards which appeared in exactly 7 different sets"
+      = search_help "papersets=7", "cards which appeared in exactly 7 different paper sets"
 
     %ul
       = search_help "mv=2 // mv=3", "cards with mana value 2 or one side and mana value 3 on another (split spells)"

@@ -1,21 +1,13 @@
 describe "Full Database Test" do
   include_context "db"
 
-  # This changes whenever a new set is added, and needs updating a lot
-  # The point of this test is to make sure cards don't get added or dropped
-  # by changes which are not expected to, like updating to new mtgjson data
-  # for same sets, indexer changes etc.
-  it "stats" do
-    db.number_of_cards.should eq(22968)
-    db.number_of_printings.should eq(57648)
-  end
+  # There's no point checking db.number_of_cards / db.number_of_printings, uuid index will flag any unexpected changes
 
-  # I'm not even sure what good this test does, delete?
   it "is:promo" do
     # it's not totally clear what counts as "promo"
     # and different engines return different results
     # It might be a good idea to sort out edge cases someday
-    assert_count_printings "is:promo", 5698
+    assert_search_equal "is:promo", "st:promo"
   end
 
   it "block codes" do
@@ -171,49 +163,11 @@ describe "Full Database Test" do
       "Elspeth Tirel"
   end
 
-  it "alt Rebecca Guay" do
-    assert_search_results %[a:"rebecca guay" alt:(-a:"rebecca guay")],
-      "Ancestral Memories",
-      "Angelic Page",
-      "Angelic Wall",
-      "Auramancer",
-      "Aven Mindcensor",
-      "Bitterblossom",
-      "Boomerang",
-      "Channel",
-      "Coral Merfolk",
-      "Dark Banishing",
-      "Dark Ritual",
-      "Defense of the Heart",
-      "Elven Cache",
-      "Elvish Lyrist",
-      "Elvish Piper",
-      "Enchanted Evening",
-      "Fecundity",
-      "Forest",
-      "Gaea's Blessing",
+  it "alt a" do
+    assert_search_results %[a:"Randy Elliott" alt:(-a:"Randy Elliott")],
       "Island",
-      "Mana Breach",
-      "Memory Lapse",
-      "Mother of Runes",
-      "Mountain",
-      "Mulch",
-      "Path to Exile",
-      "Phantom Monster",
-      "Plains",
-      "Sea Sprite",
-      "Serra Angel",
-      "Spellstutter Sprite",
-      "Starlit Angel",
-      "Swamp",
-      "Taunting Elf",
-      "Thoughtleech",
-      "Twiddle",
-      "Wall of Wood",
-      "Wanderlust",
-      "Wonder",
-      "Wood Elves",
-      "Youthful Knight"
+      "Paladin en-Vec",
+      "Peace of Mind"
   end
 
   it "alt test of time" do
@@ -258,42 +212,6 @@ describe "Full Database Test" do
       "Lotus Petal",
       "Ornithopter",
       "Spell Pierce"
-  end
-
-  it "pow:special" do
-    assert_search_equal "pow=1+*", "pow=*+1"
-    assert_search_include "pow=*", "Krovikan Mist"
-    assert_search_results "pow=1+*",
-      "Allosaurus Rider",
-      "Gaea's Avenger",
-      "Haunting Apparition",
-      "Lost Order of Jarkeld",
-      "Mwonvuli Ooze",
-      "Nighthawk Scavenger"
-    assert_search_results "pow=2+*",
-      "Angry Mob", "Aysen Crusader"
-    assert_search_equal "pow>*", "pow>=1+*"
-    assert_search_equal "pow>1+*", "pow>=2+*"
-    assert_search_equal "pow>1+*", "pow=2+*"
-    assert_search_equal "pow=*2", "pow=*²"
-    assert_search_results "pow=*2",
-      "S.N.O.T."
-  end
-
-  it "loy:special" do
-    assert_search_results "loy=0", "Jeska, Thrice Reborn", "Dakkon, Shadow Slayer"
-    assert_search_equal "loy=x", "loy=X"
-    assert_search_results "loy=x", "Nissa, Steward of Elements"
-  end
-
-  it "tou:special" do
-    # Mostly same as power except 7-*
-    assert_search_results "tou=7-*", "Shapeshifter"
-    assert_search_results "tou>8-*"
-    assert_search_results "tou>2-*", "Shapeshifter"
-    assert_search_results "tou>8-*"
-    assert_search_results "tou<=8-*", "Shapeshifter"
-    assert_search_results "tou<=2-*"
   end
 
   it "is:funny" do
@@ -405,7 +323,7 @@ describe "Full Database Test" do
   it "promo and special" do
     # warn "not sure what to do with rarity special (v4 no longer uses it, should we?)"
     # it's back in v5 now ???
-    assert_search_equal "r:special -e:tsr", "(Super Secret Tech) or (e:vma r:special) or (e:tsb) or (Prismatic Piper)"
+    assert_search_equal "r:special -e:tsr,plist", "(Super Secret Tech) or (e:vma r:special) or (e:tsb) or (Prismatic Piper)"
     assert_count_cards "r:special e:tsr", 121
   end
 
@@ -456,12 +374,6 @@ describe "Full Database Test" do
     assert_search_equal %[e:"Ugin's Fate"], %[e:"Ugin Fate"]
     assert_search_equal %[e:"Ugin's Fate"], %[e:"Ugins Fate"]
     assert_search_equal %[e:"Duel Decks Anthology, Divine vs. Demonic"], %[e:"Duel Decks Anthology Divine vs Demonic"]
-  end
-
-  it "year" do
-    "t:planeswalker year = 2010".should have_count_printings 16
-    "t:planeswalker year < 2013".should have_count_printings 72
-    "t:planeswalker year > 2014".should equal_search "t:planeswalker year >= 2015"
   end
 
   it "is:custom" do

@@ -1,3 +1,6 @@
+# This file is more double checking mtgjson's work that anything we really should be doing
+# Normally I wouldn't bother, but it caught a huge number of mtgjson bugs
+
 describe "Foils" do
   include_context "db"
 
@@ -74,7 +77,7 @@ describe "Foils" do
       case set.code
       when "ha1", "ha2", "ha3", "ha4", "ha5"
         # Does it even matter on Arena
-      when "htr16", "htr17", "htr18", "htr19"
+      when "htr16", "htr17", "htr18", "htr19", "htr20"
         # Does it even matter?
       when "g17", "g18", "fmb1"
         assert_foiling(set.printings, "foilonly")
@@ -82,7 +85,7 @@ describe "Foils" do
         assert_foiling(set.printings, "nonfoil")
       when "ced", "cei", "chr", "ugl", "pelp", "pgru", "palp", "por", "p02", "ptk", "pdrc", "plgm", "ppod", "ugin", "pcel", "van", "s99", "mgb", "ice", "usg"
         assert_foiling(set.printings, "nonfoil")
-      when "ust", "tsb", "cns", "soi", "zne", "cc1"
+      when "ust", "tsb", "cns", "soi", "zne", "cc1", "cc2"
         assert_foiling(set.printings, "both")
       when "cm1", "p15a", "psus", "psum", "pwpn", "p2hg", "pgpx", "pwcq", "plpa", "pjgp", "ppro", "pgtw", "pwor", "pwos", "prel", "pfnm"
         assert_foiling(set.printings, "foilonly")
@@ -246,9 +249,6 @@ describe "Foils" do
         nonfoils, foils = set.cards_in_precons
         assert_foiling(set.printings.select{|c| nonfoils.include?(c.name)}, "nonfoil")
         assert_foiling(set.printings.select{|c| foils.include?(c.name)}, "both")
-      when "znc"
-        # is it like C20?
-        warn "znr foiling: how it even works?"
       when "cmr"
         # It is sort of described in:
         # https://mtg.fandom.com/wiki/Commander_Legends#Set_details
@@ -266,14 +266,14 @@ describe "Foils" do
         normal_cards, extra_cards = set.printings.partition{|c| c.number !~ /e/}
         assert_foiling(normal_cards, "both")
         assert_foiling(extra_cards, "foilonly")
-      when "c21"
-        warn "C21 mtgjson foiling data is not fixed yet"
       when "2xm"
-        promo_cards, regular_cards = set.printings.partition{|c| c.number == "383" }
+        promo_cards, regular_cards = set.printings.partition{|c| c.number.to_i >= 383 }
         assert_foiling(promo_cards, "foilonly")
         assert_foiling(regular_cards, "both")
-      when "afr"
-        warn "afr foiling: how it even works?"
+      when "afr", "afc", "mid", "mic", "znc", "c21", "vow"
+        # I'm giving up on everything from booster fun onwards
+        # they're probably have extra versions in set/collector boosters
+        # but it's not documented anywhere
       else
         assert_by_type(set)
       end

@@ -43,7 +43,7 @@ describe PackFactory do
       regular_sets.select{|set| set.release_date >= start_date}.map(&:code).to_set - %W[emn soi] + %W[m15 mh1 2xm cmr klr akr tsr mh2]
     }
     let(:expected_mtgjson_variant) {
-      ["mir", "ody", "por", "5ed", "soi", "atq", "drk", "inv", "pcy", "4ed", "7ed", "8ed", "9ed"]
+      ["mir", "ody", "por", "5ed", "soi", "atq", "drk", "inv", "pcy", "4ed", "7ed", "8ed", "9ed", "mb1"]
     }
     let(:expected_basics_not_in_boosters) {
       ["ice", "mir", "tmp", "usg", "4ed", "5ed", "6ed"]
@@ -65,7 +65,7 @@ describe PackFactory do
     db.sets.each do |set_code, set|
       # Some sets don't follow these rules
       # They should have own tests
-      next if %W[dgm unh jou frf tsp cn2 bbd war arn cmb1 stx].include?(set_code)
+      next if %W[dgm unh jou frf tsp cn2 bbd war arn cmb1 cmb2 stx].include?(set_code)
       set_pp = "#{set.name} [#{set.code}]"
       pack = factory.for(set_code)
       next unless pack
@@ -791,7 +791,7 @@ describe PackFactory do
   end
 
   context "MB1/CMB1/FMB1" do
-    let(:mb1_cards) { db.search("++ e:mb1").printings }
+    let(:mb1_cards) { db.search("++ e:mb1 -number:/†/").printings }
     let(:fmb1_cards) { db.search("++ e:fmb1").printings }
     let(:cmb1_cards) { db.search("++ e:cmb1").printings }
 
@@ -1588,6 +1588,70 @@ describe PackFactory do
         ev[uncommon_ntm].should eq Rational(1,3) * Rational(5,20) * Rational(1, 80+20)
         ev[rare_ntm].should eq Rational(1,3) * Rational(3,20) * Rational(2, 140+40)
         ev[mythic_ntm].should eq Rational(1,3) *  Rational(3,20) * Rational(1, 140+40)
+      end
+    end
+  end
+
+  # For basics, commons, distribution is known
+  # For foils, totals are known, we can just assume DFCness doesn't matter and usual rates apply (12/20 c/b, 5/20 u, 3/20 r/m)
+  #
+  # Exact rules:
+  # * 1 R/M per pack
+  # * 3 U per pack
+  # * 1 DFC U/R/M per pack
+
+  # Approximate rules:
+  # * DFC mythics == DFC mythics
+  # * DFC rares == DFC rares
+  # * DFC uncommons == DFC uncommons
+  #
+  # To make uncommon rate equal (3/83), ratio needs to be 14:69
+  # To make rare/mythic rare equal , ratio needs to be 27:121
+  # They differ by 8%
+  # Both are close enough to 1:5 that we can assume it's 1:5 and we likely won't be too wrong.
+  #
+  # All the ~1 fudge factors in the normal test represent this
+  context "MID" do
+    let(:set_code) { "mid" }
+    let(:basic) { card("r:basic") }
+    let(:common) { card("r:common number<=277 -layout:dfc") }
+    let(:uncommon) { card("r:uncommon number<=277 -layout:dfc") }
+    let(:rare) { card("r:rare number<=277 -layout:dfc") }
+    let(:mythic) { card("r:mythic number<=277 -layout:dfc") }
+    let(:dfc_common) { card("r:common number<=277 layout:dfc") }
+    let(:dfc_uncommon) { card("r:uncommon number<=277 layout:dfc") }
+    let(:dfc_rare) { card("r:rare number<=277 layout:dfc") }
+    let(:dfc_mythic) { card("r:mythic number<=277 layout:dfc") }
+
+    context "normal" do
+      it do
+        ev[basic].should eq Rational(1,10)
+        ev[common].should eq Rational(1,90) * Rational(26, 3)
+        ev[uncommon].should eq Rational(3, 83) * (1079/1080r) # 0.1% deviation
+        ev[rare].should eq Rational(2, 15 + 53*2 + 5 + 11*2) * (370/363r) # 2% deviation
+        ev[mythic].should eq Rational(1, 15 + 53*2 + 5 + 11*2) * (370/363r) # 2% deviation
+
+        ev[dfc_common].should eq Rational(1,10)
+        ev[dfc_uncommon].should eq Rational(3, 83) * (415/414r) # 0.2% deviation
+        ev[dfc_rare].should eq Rational(2, 15 + 53*2 + 5 + 11*2) * (74/81r) # 9% deviation
+        ev[dfc_mythic].should eq Rational(1, 15 + 53*2 + 5 + 11*2) * (74/81r) # 9% deviation
+      end
+    end
+
+    context "foil" do
+      let(:foil) { true }
+
+      it do
+        ev[basic].should eq Rational(1,3) * Rational(12,20) * Rational(1,10+90+10)
+        ev[common].should eq Rational(1,3) * Rational(12,20) * Rational(1,10+90+10)
+        ev[uncommon].should eq Rational(1,3) * Rational(5,20) * Rational(1,60+23)
+        ev[rare].should eq Rational(1,3) * Rational(3,20) * Rational(2, 15 + 53*2 + 5 + 11*2)
+        ev[mythic].should eq Rational(1,3) * Rational(3,20) * Rational(1, 15 + 53*2 + 5 + 11*2)
+
+        ev[dfc_common].should eq Rational(1,3) * Rational(12,20) * Rational(1,10+90+10)
+        ev[dfc_uncommon].should eq Rational(1,3) * Rational(5,20) * Rational(1,60+23)
+        ev[dfc_rare].should eq Rational(1,3) * Rational(3,20) * Rational(2, 15 + 53*2 + 5 + 11*2)
+        ev[dfc_mythic].should eq Rational(1,3) * Rational(3,20) * Rational(1, 15 + 53*2 + 5 + 11*2)
       end
     end
   end

@@ -7,15 +7,8 @@ describe "Formats" do
     assert_search_equal "f:standard", "legal:standard"
     assert_search_results "f:extended" # Does not exist according to mtgjson
     assert_search_equal_cards "f:standard",
-      %[e:eld,thb,iko,m21,znr,khm,stx,afr
-      -(Cauldron Familiar)
-      -(Fires of Invention)
-      -(Oko Thief of Crowns)
-      -(Once Upon Time)
-      -(Uro, Titan of Nature's Wrath)
+      %[e:znr,khm,stx,afr,mid,vow
       -(Omnath, Locus of Creation)
-      -(Lucky Clover)
-      -(Escape to the Wilds)
     ]
     assert_search_equal_cards 'f:"ravnica block"', "e:rav,gp,di"
     assert_search_equal 'f:"ravnica block"', 'legal:"ravnica block"'
@@ -200,8 +193,8 @@ describe "Formats" do
   # We don't have all historical legality for Duel Commander yet,
   # maybe add it at some later point
   it "duel commander" do
-    assert_count_cards 'banned:"duel commander"', 85
-    assert_count_cards 'restricted:"duel commander"', 24
+    assert_count_cards 'banned:"duel commander"', 86
+    assert_count_cards 'restricted:"duel commander"', 36
   end
 
   # Used to be Lurrus
@@ -211,7 +204,7 @@ describe "Formats" do
 
   it "historic" do
     # including STA pre-banned
-    assert_count_cards "banned:historic", 20
+    assert_count_cards "banned:historic", 24
   end
 
   it "premodern" do
