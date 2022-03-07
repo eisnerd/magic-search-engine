@@ -1,11 +1,11 @@
 [
 	{
 		"name": "Available",
-		"listings": ["starter decks.csv", "THB green commons.csv", "Znr set cube purchased.csv", "album.csv", "Printed proxies.csv"]
+		"listings": ["starter decks.csv", "THB green commons.csv", "Znr set cube purchased.csv", "Neo set cube purchased.csv", "album.csv", "Printed proxies.csv"]
 	},
 	{
 		"name": "Owned",
-		"listings": ["starter decks.csv", "THB green commons.csv", "Znr set cube purchased.csv", "album.csv"]
+		"listings": ["starter decks.csv", "THB green commons.csv", "Znr set cube purchased.csv", "Neo set cube purchased.csv", "album.csv"]
 	},
 	{
 		"name": "Proxied",
@@ -22,6 +22,10 @@
 	{
 		"name": "Cube",
 		"listings": ["WBG Cube for Four 20-Mar-2021.csv"]
+	},
+	{
+		"name": "Set Cubes",
+		"listings": ["Znr set cube purchased.csv", "Neo set cube purchased.csv"]
 	},
 	{
 		"name": "Bulk",
