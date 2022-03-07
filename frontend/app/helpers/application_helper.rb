@@ -168,7 +168,7 @@ module ApplicationHelper
   end
 
   def self.card_picture_path(card)
-    self.card_picture_path_hq(card) or self.card_picture_path_lq(card)
+    self.card_picture_path_hq(card) or self.card_picture_path_lq(card) or "https://api.scryfall.com/cards/#{card.set_code}/#{card.number.gsub(/\D$/,'')}?format=image&version=png#{'&face=back' if card.number.end_with?'b'}"
   end
 
   def self.load_offsite_list()
