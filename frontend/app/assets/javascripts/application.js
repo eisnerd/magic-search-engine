@@ -18,6 +18,11 @@
 //= require_tree .
 
 function onLoad() {
+  $('.card_picture_container .copy').on('click', function(e) {
+    e.stopPropagation();
+    navigator.clipboard.writeText($(this).parent('.card_picture_container').find('img')[0].alt);
+    return false;
+  })
   $(document).on("mouseover", ".previewable_card_name", function() {
     var preview_link = $(this).data("preview-link");
     $(this).closest(".decklist").find(".card_picture_cell").hide();

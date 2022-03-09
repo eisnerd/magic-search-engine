@@ -269,6 +269,24 @@ form.search {
   perspective: 1000px;
   z-index: 0;
 
+  .copy {
+    content: "";
+    position: absolute;
+    bottom: 30px;
+    left: 20px;
+    width: 50px;
+    height: 50px;
+    background: #ffffffb0;
+    background-image: url(https://fonts.gstatic.com/s/i/materialicons/content_copy/v17/24px.svg);
+    background-size: contain;
+    box-shadow: 0 0 5px 2px white;
+    opacity: 0;
+
+    &:hover {
+      opacity: 100%;
+    }
+  }
+
   .foil_layer {
     position: absolute;
     top: 0;

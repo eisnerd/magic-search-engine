@@ -32,6 +32,7 @@
       = render partial: "card/card_picture", locals: { card: card, foil: foil, card_layout: "normal" }
     - else # Might need different layouts too
       = render partial: "card/card_picture", locals: { card: card, foil: foil, card_layout: "normal" }
+    .copy
 - else
   .card_picture_container
     .picture_missing
