@@ -3,27 +3,28 @@ require "nokogiri"
 require "pathname"
 require "set"
 require_relative "artist"
-require_relative "card"
-require_relative "card_set"
 require_relative "card_printing"
-require_relative "color"
-require_relative "query"
-require_relative "spelling_suggestions"
-require_relative "physical_card"
-require_relative "card_sheet"
-require_relative "color_balanced_card_sheet"
+require_relative "card_set"
 require_relative "card_sheet_factory"
-require_relative "pack"
-require_relative "pack_factory"
-require_relative "weighted_pack"
-require_relative "sealed"
-require_relative "deck"
-require_relative "precon_deck"
-require_relative "deck_parser"
+require_relative "card_sheet"
+require_relative "card"
+require_relative "color_balanced_card_sheet"
+require_relative "color"
 require_relative "deck_database"
+require_relative "deck_parser"
+require_relative "deck"
+require_relative "pack_factory"
+require_relative "pack"
+require_relative "physical_card"
+require_relative "precon_deck"
+require_relative "product"
+require_relative "query"
+require_relative "sealed"
 require_relative "pool_database"
+require_relative "spelling_suggestions"
 require_relative "unknown_card"
 require_relative "user_deck_parser"
+require_relative "weighted_pack"
 
 # Backport from >=2.4 to 2.3
 module Enumerable
@@ -35,7 +36,7 @@ end
 
 class String
   def normalize_accents
-    result = gsub("Æ", "Ae").gsub("æ", "ae").tr("ĆćÄàáâäãèéêíõöúûüǵŠš’\u2212", "CcAaaaaaeeeioouuugSs'-")
+    result = gsub("Æ", "Ae").gsub("æ", "ae").tr("ĆćÄàáâäãèéêíõöúûüǵŠšñ’\u2212", "CcAaaaaaeeeioouuugSsn'-")
     result = self if result == self # Memory saving trick
     -result
   end
@@ -85,7 +86,7 @@ class CardDatabase
     name = card_printing.name
     decks.select do |deck|
       next unless deck.all_set_codes.include?(set_code)
-      [*deck.cards, *deck.sideboard].any? do |_, physical_card|
+      [*deck.cards, *deck.sideboard, *deck.commander].any? do |_, physical_card|
         physical_card.parts.any? do |physical_card_part|
           physical_card_part.set_code == card_printing.set_code and
           physical_card_part.name == card_printing.name
@@ -308,12 +309,9 @@ class CardDatabase
       @cards[card_name] = card.dup
       @cards[card_name].printings = printings
     end
-    # color_identity already set in parent database
   end
 
   def load_from_json!(path)
-    color_identity_cache = {}
-    multipart_cards = {}
     data = JSON.parse(path.open.read)
     freeze_strings!(data)
     data["sets"].each do |set_code, set_data|
@@ -330,10 +328,6 @@ class CardDatabase
       next if card_data["layout"] == "token"
       normalized_name = card_name.downcase.normalize_accents
       card = @cards[normalized_name] = Card.new(card_data.reject{|k,_| k == "printings"})
-      color_identity_cache[card_name] = card.partial_color_identity
-      if card_data["names"]
-        multipart_cards[card_name] = card_data["names"] - [card_name]
-      end
       card_data["printings"].each do |set_code, printing_data|
         printing = CardPrinting.new(
           card,
@@ -346,9 +340,7 @@ class CardDatabase
       card.first_release_date
       card.last_release_date
     end
-    fix_multipart_cards_color_identity!(color_identity_cache)
-    link_multipart_cards!(multipart_cards)
-    link_partner_cards!
+    resolve_references!
     setup_artists!
     setup_sort_index!
     DeckDatabase.new(self).load!
@@ -357,12 +349,17 @@ class CardDatabase
   end
 
   # Change card number to CardPrinting reference
-  def link_partner_cards!
+  def resolve_references!
     @sets.each do |set_code, set|
       set.printings.each do |card|
         if card.partner
-          partner = set.printings.find{|c| c.number == card.partner} or raise "Bad partner ID"
+          partner = set.printings.find{|c| c.number == card.partner} or raise "Bad partner number #{partner}"
           card.partner = partner
+        end
+        if card.others
+          card.others = card.others.map{|other|
+            set.printings.find{|c| c.number == other} or raise "Bad other number #{other}"
+          }
         end
       end
     end
@@ -379,36 +376,6 @@ class CardDatabase
         @cards_in_precons[set_code] ||= [Set.new, Set.new]
         @cards_in_precons[set_code][foil ? 1 : 0] << name
       end
-  end
-
-  def fix_multipart_cards_color_identity!(color_identity_cache)
-    @cards.each do |card_name, card|
-      if card.has_multiple_parts?
-        card.color_identity = -card.names.map{|n| color_identity_cache[n].chars }.inject(&:|).sort.join
-      end
-    end
-  end
-
-  def link_multipart_cards!(multipart_cards)
-    multipart_cards.each do |card_name, other_names|
-      card = @cards[card_name.downcase]
-      other_cards = other_names.map{|name| @cards[name.downcase] }
-      card.printings.each do |printing|
-        printing.others = other_cards.map do |other_card|
-          from_same_set = other_card.printings.select{|other_printing| other_printing.set_code == printing.set_code}
-          if from_same_set.size == 1
-            from_same_set[0]
-          else
-            matching_number = from_same_set.select{|other_printing| other_printing.number.sub(/[ab]\z/, "") == printing.number.sub(/[ab]\z/, "") }
-            if matching_number.size == 1
-              matching_number[0]
-            else
-              raise "Can't link other side - #{card_name}"
-            end
-          end
-        end
-      end
-    end
   end
 
   def setup_artists!
@@ -433,7 +400,7 @@ class CardDatabase
     printings.sort_by{|c|
       [
         c.name,
-        c.oversized ? 1 : 0,
+        c.nontournament ? 1 : 0,
         c.online_only? ? 1 : 0,
         c.frame == "old" ? 1 : 0,
         c.set.regular? ? 0 : 1,

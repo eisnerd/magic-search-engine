@@ -11,16 +11,17 @@ describe "Old templates" do
   end
 
   # Chandra, Gremlin Wrangler (silver-border)
+  # Comet, Stellar Pup (silver-border)
   # Crovax (avatar)
   # Firesong and Sunspeaker (legitimate)
   # Sarah's Wings (CMB1)
   # Tornellan Protector (Sega Dreamcast Cards)
   it do
-    assert_count_cards %[o:"creature or player"], 5
+    assert_count_cards %[o:"creature or player"], 6
   end
 
   it do
-    assert_count_cards %[o:"~ can't be countered"], 1 # Allosaurus Shepherd
+    assert_count_cards %[o:"~ can't be countered"], 0
   end
 
   ### On non-Gatherer cards only

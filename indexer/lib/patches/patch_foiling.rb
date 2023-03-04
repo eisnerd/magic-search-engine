@@ -21,7 +21,11 @@ class PatchFoiling < Patch
       when [false, true]
         card["foiling"] = "foilonly"
       else
-        warn "Bad foiling information for #{card["name"]} in #{card["set_code"]}"
+        if card["finishes"].include?("etched")
+          card["foiling"] = "foilonly"
+        else
+          warn "Bad foiling information for #{card["name"]} in #{card["set_code"]}"
+        end
       end
       card.delete "hasFoil"
       card.delete "hasNonFoil"
@@ -34,6 +38,8 @@ class PatchFoiling < Patch
         fix_to card, "nonfoil"
       when "inv", "khm", "stx"
         fix_to card, "both"
+      when "zen"
+        fix_to card, "nonfoil" if card["number"] =~ /a/
       when "tsr"
         if card["number"] == "411"
           # I think?

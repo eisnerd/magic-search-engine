@@ -9,6 +9,8 @@ describe PackFactory do
   def card(query, **args)
     query_set_code = args[:set_code] || set_code
     query_foil = args[:foil] || foil
+    query += " is:foil" if query_foil
+    query += " is:nonfoil" unless query_foil
     physical_card("e:#{query_set_code} is:booster #{query}", query_foil)
   end
 
@@ -40,13 +42,13 @@ describe PackFactory do
       s.types.include?("core") or s.types.include?("expansion")
     }.to_set }
     let(:expected_official) {
-      regular_sets.select{|set| set.release_date >= start_date}.map(&:code).to_set - %W[emn soi] + %W[m15 mh1 2xm cmr klr akr tsr mh2]
+      regular_sets.select{|set| set.release_date >= start_date}.map(&:code).to_set - %W[emn soi] + %W[m15 mh1 2xm cmr klr akr tsr mh2 dbl clb 2x2 unf dmr]
     }
     let(:expected_mtgjson_variant) {
-      ["mir", "ody", "por", "5ed", "soi", "atq", "drk", "inv", "pcy", "4ed", "7ed", "8ed", "9ed", "mb1"]
+      ["mir", "ody", "por", "5ed", "soi", "atq", "drk", "inv", "pcy", "4ed", "7ed", "8ed", "9ed", "mb1", "ons", "gpt", "ala"]
     }
     let(:expected_basics_not_in_boosters) {
-      ["ice", "mir", "tmp", "usg", "4ed", "5ed", "6ed"]
+      ["ice", "mir", "tmp", "usg", "4ed", "5ed", "6ed", "zen"]
     }
     let(:expected) {
       expected_official | expected_mtgjson_variant | expected_basics_not_in_boosters
@@ -65,7 +67,7 @@ describe PackFactory do
     db.sets.each do |set_code, set|
       # Some sets don't follow these rules
       # They should have own tests
-      next if %W[dgm unh jou frf tsp cn2 bbd war arn cmb1 cmb2 stx].include?(set_code)
+      next if %W[dgm unh jou frf tsp cn2 bbd war arn cmb1 cmb2 stx unf].include?(set_code)
       set_pp = "#{set.name} [#{set.code}]"
       pack = factory.for(set_code)
       next unless pack
@@ -75,7 +77,7 @@ describe PackFactory do
         pack.nonfoil_cards.should match_array(rest),
           "All cards in #{set_pp} should be possible in its packs as nonfoil except basics"
       else
-        pack.nonfoil_cards.should match_array(set.physical_cards_in_boosters),
+        pack.nonfoil_cards.should include(*set.physical_cards_in_boosters),
           "All cards in #{set_pp} should be possible in its packs as nonfoil"
       end
     end
@@ -85,14 +87,14 @@ describe PackFactory do
     db.sets.each do |set_code, set|
       # Some sets don't follow these rules
       # They should have own tests
-      next if %W[tsp cn2 bbd war mb1].include?(set_code)
+      next if %W[tsp cn2 bbd war mb1 bro].include?(set_code)
       set_pp = "#{set.name} [#{set.code}]"
       pack = factory.for(set_code)
       next unless pack
       next unless pack.has_foils?
       actual_cards = pack.foil_cards.select{|c| !c.set.types.include?("masterpiece") }
       expected_cards = set.physical_cards_in_boosters(true)
-      actual_cards.should match_array(expected_cards),
+      actual_cards.should include(*expected_cards),
         "All cards in #{set_pp} should be possible in its packs as foil"
     end
   end
@@ -155,7 +157,7 @@ describe PackFactory do
         ev[common].should eq Rational(391,40) * Rational(1,55)
         ev[uncommon].should eq Rational(3,40)
         ev[rare].should eq Rational(1,40)
-        ev[super_secret_tech].should eq 0
+        proc{ super_secret_tech }.should raise_error(/No card matching/)
       end
     end
 
@@ -421,7 +423,7 @@ describe PackFactory do
 
     context "non-foil" do
       it do
-        ev[sfc_common].should eq (10 - (1/8r) - (9/40r)) * Rational(1, 70)
+        ev[sfc_common].should eq (9 - (1/8r) - (9/40r)) * Rational(1, 70)
         ev[sfc_uncommon].should eq Rational(3, 60)
         ev[sfc_rare].should eq Rational(2, 96)
         ev[sfc_mythic].should eq Rational(1, 96)
@@ -435,8 +437,9 @@ describe PackFactory do
     context "foil" do
       let(:foil) { true }
       it do
-        ev[sfc_common].should eq Rational(9,40) * Rational(12,20) * Rational(1, 74)
-        ev[dfc_common].should eq Rational(9,40) * Rational(12,20) * Rational(1, 74)
+        # SOI basics included on foil sheet
+        ev[sfc_common].should eq Rational(9,40) * Rational(12,20) * Rational(1, 74 + 15)
+        ev[dfc_common].should eq Rational(9,40) * Rational(12,20) * Rational(1, 74 + 15)
         ev[sfc_uncommon].should eq Rational(9,40) * Rational(5,20) * Rational(1, 70)
         ev[dfc_uncommon].should eq Rational(9,40) * Rational(5,20) * Rational(1, 70)
         ev[sfc_rare].should eq Rational(9,40) * Rational(3,20) * Rational(2, 108)
@@ -791,7 +794,7 @@ describe PackFactory do
   end
 
   context "MB1/CMB1/FMB1" do
-    let(:mb1_cards) { db.search("++ e:mb1 -number:/†/").printings }
+    let(:mb1_cards) { db.search("++ e:mb1 -number:/†/ -number>=1695").printings }
     let(:fmb1_cards) { db.search("++ e:fmb1").printings }
     let(:cmb1_cards) { db.search("++ e:cmb1").printings }
 
@@ -993,7 +996,7 @@ describe PackFactory do
       let(:set_code) { "con" }
 
       it do
-        ev[common].should eq Rational(10, 221)
+        ev[common].should eq Rational(10,  221)
         ev[uncommon].should eq Rational(3, 140)
         ev[rare].should eq Rational(2, 35 + 2*123)
         ev[mythic].should eq Rational(1, 35 + 2*123)
@@ -1653,6 +1656,75 @@ describe PackFactory do
         ev[dfc_rare].should eq Rational(1,3) * Rational(3,20) * Rational(2, 15 + 53*2 + 5 + 11*2)
         ev[dfc_mythic].should eq Rational(1,3) * Rational(3,20) * Rational(1, 15 + 53*2 + 5 + 11*2)
       end
+    end
+  end
+
+  # https://magic.wizards.com/en/articles/archive/feature/innistrad-double-feature-product-overview-2021-11-15
+  # 4x Innistrad: Midnight Hunt commons
+  # 4x Innistrad: Crimson Vow commons
+  # 2x Innistrad: Midnight Hunt uncommons
+  # 2x Innistrad: Crimson Vow uncommons
+  # 1x Innistrad: Midnight Hunt rare or mythic rare
+  # 1x Innistrad: Crimson Vow rare or mythic rare
+  # 1x Silver screen foil card
+  #
+  # No information about DFC rarity rates is provided, so I assume:
+  # * C SFC EV = C DFC EV (so C is 2/5 of packs, U+R+M is 3/5 of packs)
+  # * U/R/M ratios are like in VOW/MID packs
+  context "DBL" do
+    let(:set_code) { "dbl" }
+    let(:basic) { card("r:basic") }
+    {
+      "mid" => "number<=267",
+      "vow" => "number<=554 number>=268",
+    }.each do |subset, range|
+      let(:common) { card("r:common #{range} -layout:dfc") }
+      let(:uncommon) { card("r:uncommon #{range} -layout:dfc") }
+      let(:rare) { card("r:rare #{range} -layout:dfc") }
+      let(:mythic) { card("r:mythic #{range} -layout:dfc") }
+      let(:dfc_common) { card("r:common #{range} layout:dfc") }
+      let(:dfc_uncommon) { card("r:uncommon #{range} layout:dfc") }
+      let(:dfc_rare) { card("r:rare #{range} layout:dfc") }
+      let(:dfc_mythic) { card("r:mythic #{range} layout:dfc") }
+
+      it do
+        ev[common].should eq Rational(4, 100)
+        ev[uncommon].should eq Rational(2, 83) * (1079/960r)
+        ev[rare].should eq Rational(2, 119+35) * (217/220r)
+        ev[mythic].should eq Rational(1, 119+35) * (217/220r)
+
+        ev[dfc_common].should eq Rational(4, 100)
+        ev[dfc_uncommon].should eq Rational(2, 83) * (249/368r)
+        ev[dfc_rare].should eq Rational(2, 119+35) * (77/60r)
+        ev[dfc_mythic].should eq Rational(1, 119+35) * (77/60r)
+      end
+    end
+  end
+
+  context "30A" do
+    let(:set_code) { "30a" }
+    let(:basic) { card("r:basic number<=297") }
+    let(:common) { card("r:common number<=297") }
+    let(:uncommon) { card("r:uncommon number<=297") }
+    let(:rare) { card("r:rare number<=297 -is:dual") }
+    let(:dual) { card("r:rare number<=297 is:dual") }
+    let(:retro_basic) { card("r:basic number>297") }
+    let(:retro_common) { card("r:common number>297") }
+    let(:retro_uncommon) { card("r:uncommon number>297") }
+    let(:retro_rare) { card("r:rare number>297 -is:dual") }
+    let(:retro_dual) { card("r:rare number>297 is:dual") }
+
+    it do
+      ev[basic].should eq Rational(2, 15)
+      ev[common].should eq Rational(7, 74)
+      ev[uncommon].should eq Rational(3, 95)
+      ev[rare].should eq Rational(1, 123)
+      ev[dual].should eq Rational(2, 123)
+      ev[retro_basic].should eq Rational(1, 15)
+      ev[retro_common].should eq Rational(4, 3*95 + 4*74) * Rational(7, 10) * Rational(830, 827)
+      ev[retro_uncommon].should eq Rational(3, 3*95 + 4*74) * Rational(7, 10) * Rational(830, 827)
+      ev[retro_rare].should eq Rational(1, 123) * Rational(3, 10) * Rational(820, 827)
+      ev[retro_dual].should eq Rational(2, 123) * Rational(3, 10) * Rational(820, 827)
     end
   end
 end

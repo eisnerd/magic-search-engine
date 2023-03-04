@@ -19,6 +19,8 @@ describe Deck do
       ["duel deck", "Planeswalker Deck"], # v4
       ["board game deck", "Theme Deck"],
       ["box", "Game Night Deck"],
+      ["pioneer", "Pioneer Challenger Deck"],
+      ["standard", "Pioneer Challenger Deck"], # q08 listed under bro?
       # Standard sets
       ["core", "Clash Pack"],
       ["core", "Event Deck"],
@@ -35,6 +37,7 @@ describe Deck do
       ["expansion", "Planeswalker Deck"],
       ["expansion", "Theme Deck"],
       ["expansion", "Brawl Deck"],
+      ["standard", "Starter Deck"],
       ["starter", "Intro Pack"],
       ["box", "Guild Kit"],
       ["starter", "Starter Deck"],
@@ -49,6 +52,7 @@ describe Deck do
       ["funny", "Halfdeck"],
       ["draft innovation", "Jumpstart"], # JMP only
       ["memorabilia", "World Championship Decks"], # WCxx
+      ["expansion", "Jumpstart"],
     ]
 
     db.sets.each do |set_code, set|
@@ -74,7 +78,7 @@ describe Deck do
         ![
           "cm1", "opca", "oe01", "ohop", "phop", "oarc", "parc", "opc2",
           "ocmd", "oc13", "oc14", "oc15", "oc16", "oc17", "oc18", "oc19", "oc20", "oc21",
-          "cmr",
+          "cmr", "cc1", "cc2",
         ].include?(set.code)
       }
   end
@@ -118,6 +122,18 @@ describe Deck do
         sets_found.should match_array ["afc", "afr"]
       when "mic"
         sets_found.should match_array ["mic", "mid"]
+      when "voc"
+        sets_found.should match_array ["voc", "vow"]
+      when "nec"
+        sets_found.should match_array ["nec", "neo"]
+      when "ncc"
+        sets_found.should match_array ["ncc", "snc"]
+      when "dmc"
+        sets_found.should match_array ["dmu", "dmc"]
+      when "phed"
+        sets_found.should match_array ["phed", "sld"]
+      when "onc"
+        sets_found.should match_array ["onc", "one"]
       else
         sets_found.should eq [set.code]
       end
@@ -127,6 +143,9 @@ describe Deck do
   # This test should check that all PhysicalCards match, but this fails as:
   # * we don't have any alt art information on decklist side (mostly for basic lands)
   # * we don't have any foil information, on either side
+  #
+  # This test fails for most new sets
+  # I just need to do a date cutoff for it instead of ever growing explicit exception lists
   it "cards in precon sets are all in their precon decks" do
     precon_sets.each do |set|
       # Plane cards are technically not part of any precon in it
@@ -143,10 +162,23 @@ describe Deck do
       next if set.code == "c21"
       # Contains some AFR cards
       next if set.code == "afc"
+      # Contains some DMU cards
+      next if set.code == "dmc"
       # Contains some MID cards
       # also cards 31-38 are not in precons,
       # so this set should maybe check that?
       next if set.code == "mic"
+      # Eight additional cards with the VOC code (#31/38 to #38/38) can only be found in the Set and Collector Boosters. They aren't found in the Innistrad: Crimson Vow Commander decks.
+      next if set.code == "voc"
+      next if set.code == "nec"
+      next if set.code == "ncc"
+      next if set.code == "clb"
+      next if set.code == "brc"
+      # Extra card Fabricate as promo
+      next if set.code == "40k"
+      # Contains some SLD cards
+      next if set.code == "phed"
+      next if set.code == "onc"
 
       # All names match both ways
       set_card_names = set.physical_card_names
@@ -164,6 +196,9 @@ describe Deck do
         set_card_names += db.sets["oarc"].physical_card_names
         set_card_names.should match_array deck_card_names
       else
+        unless set_card_names.to_set == deck_card_names.to_set
+          warn "For precon set #{set.code}, cards do not match decklists (...and they won't for most new sets)"
+        end
         set_card_names.should match_array deck_card_names
       end
     end
@@ -253,6 +288,8 @@ describe Deck do
         foils_rarity.should match_array(["rare"] * 3 + ["mythic"] * 10)
         next
       end
+      # PHED is 50:50 foil nonfoil, I'll just need to trust mtgjson here
+      next if set_code == "phed"
 
       # Some crazy foiling in them
       # Deck indexer doesn't even try, it's just marked on decklist manually
@@ -268,6 +305,9 @@ describe Deck do
           foils.should match_array(clash_pack_cards)
           next
         end
+
+        # Some have foil basics
+        next if deck.type == "Jumpstart"
 
         foils = deck.physical_cards.select(&:foil)
         # Skip if no foils

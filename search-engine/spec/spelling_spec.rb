@@ -44,7 +44,7 @@ describe "Spelling" do
     spelling_suggestions("7").should eq([])
     spelling_suggestions("77").should eq([])
     # 3-4 letters - 1 correction
-    spelling_suggestions("mux").should eq(["lux", "max", "mox", "mu", "mul"])
+    spelling_suggestions("mux").should eq(["lux", "mox", "mu", "mul"])
     spelling_suggestions("xxx").should eq([])
     # size applied after unicode normalization
     spelling_suggestions("aethr").should eq(["aether"])
@@ -81,6 +81,11 @@ describe "Spelling" do
       next if name == "Silumgar Spell-Eater"
       next if name == "Prosper, Tome-Bound" # Tomebound Lich is a card name
       next if name == "Yuan-Ti Fang-Blade" # Fangblade are card names too
+      next if name == "Silver-Fur Master"
+      next if name == "Spring-Leaf Avenger"
+      next if name == "Rabble-Rouser"
+      next if name == "Wyll, Pact-Bound Duelist"
+      next if name == "Su-Chi"
       # Too complex
       next if name == "Death's-Head Buzzard"
       # I don't even
@@ -95,5 +100,13 @@ describe "Spelling" do
       name.gsub("-", "").should return_cards(name)
       name.gsub("-", " ").should include_cards(name)
     end
+  end
+
+  it "special handling of &" do
+    "R&D".should include_cards("Look at Me, I'm R&D", "R&D's Secret Lair")
+    "Dungeons & Dragons".should include_cards("Sword of Dungeons & Dragons")
+    "Dungeons and Dragons".should include_cards("Sword of Dungeons & Dragons")
+    "Minsc & Boo".should include_cards("Minsc & Boo, Timeless Heroes")
+    "Minsc and Boo".should include_cards("Minsc & Boo, Timeless Heroes")
   end
 end

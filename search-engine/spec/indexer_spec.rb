@@ -24,7 +24,7 @@ describe "Indexer hacks" do
       bfm.cmc.should eq(15)
       bfm.power.should eq(99)
       bfm.toughness.should eq(99)
-      bfm.card.partial_color_identity.should eq("b")
+      bfm.card.color_identity.should eq("b")
       bfm.typeline.should eq("Creature - The-Biggest-Baddest-Nastiest-Scariest-Creature-You'll-Ever-See")
       bfm.color_identity.should eq("b")
       bfm.flavor.should eq("\"It was big. Really, really big. No, bigger than that. Even bigger. Keep going. More. No, more. Look, we're talking krakens and dreadnoughts for jewelry. It was big\"\n-Arna Kennerd, skyknight")
@@ -32,7 +32,7 @@ describe "Indexer hacks" do
   end
 
   it "is:funny" do
-    assert_search_equal_cards "is:funny", "e:unh,ugl,uqc,hho,ust,pust,ppc1,htr,htr17,h17,tbth,tdag,tfth,thp1,thp2,thp3,ptg,cmb1,cmb2,htr16,htr17,htr18,htr19,htr20,und,punh -(t:basic -Barry) -(Steamflogger Boss) -(Hall of Triumph)"
+    assert_search_equal_cards "is:funny", "e:unh,ugl,uqc,hho,ust,pust,ppc1,h17,tbth,tdag,tfth,thp1,thp2,thp3,ptg,cmb1,cmb2,und,punh,uplist,unf,phtr,ph17,ph18,ph19,ph20,ph21 -(t:basic -Barry) -(Steamflogger Boss) -(Hall of Triumph) -(Zur the Enchanter) -is:shockland -(e:unf -is:acorn)"
   end
 
   it "Nissa's X loyallty" do
@@ -41,6 +41,7 @@ describe "Indexer hacks" do
   end
 
   it "meld card numbers" do
+    # There's a lot of weird logic for meld cards
     db.search("is:meld").printings.map{|c| [c.set_code, c.name, c.number]}.should match_array([
       ["emn", "Brisela, Voice of Nightmares", "15b"],
       ["emn", "Bruna, the Fading Light", "15a"],
@@ -60,6 +61,33 @@ describe "Indexer hacks" do
       ["v17", "Brisela, Voice of Nightmares", "5b"],
       ["v17", "Bruna, the Fading Light", "5a"],
       ["v17", "Gisela, the Broken Blade", "10"],
+      ["bro", "Argoth, Sanctum of Nature", "256a"],
+      ["bro", "Mishra, Claimed by Gix", "216"],
+      ["bro", "Mishra, Lost to Phyrexia", "163b"],
+      ["bro", "Phyrexian Dragon Engine", "163a"],
+      ["bro", "The Mightstone and Weakstone", "238a"],
+      ["bro", "Titania, Gaea Incarnate", "256b"],
+      ["bro", "Titania, Voice of Gaea", "193"],
+      ["bro", "Urza, Lord Protector", "225"],
+      ["bro", "Urza, Planeswalker", "238b"],
+      ["pbro", "Argoth, Sanctum of Nature", "256ap"],
+      ["pbro", "Argoth, Sanctum of Nature", "256as"],
+      ["pbro", "Mishra, Claimed by Gix", "216p"],
+      ["pbro", "Mishra, Claimed by Gix", "216s"],
+      ["pbro", "Mishra, Lost to Phyrexia", "163bp"],
+      ["pbro", "Mishra, Lost to Phyrexia", "163bs"],
+      ["pbro", "Phyrexian Dragon Engine", "163ap"],
+      ["pbro", "Phyrexian Dragon Engine", "163as"],
+      ["pbro", "The Mightstone and Weakstone", "238ap"],
+      ["pbro", "The Mightstone and Weakstone", "238as"],
+      ["pbro", "Titania, Gaea Incarnate", "256bp"],
+      ["pbro", "Titania, Gaea Incarnate", "256bs"],
+      ["pbro", "Titania, Voice of Gaea", "193p"],
+      ["pbro", "Titania, Voice of Gaea", "193s"],
+      ["pbro", "Urza, Lord Protector", "225p"],
+      ["pbro", "Urza, Lord Protector", "225s"],
+      ["pbro", "Urza, Planeswalker", "238bp"],
+      ["pbro", "Urza, Planeswalker", "238bs"],
     ])
   end
 

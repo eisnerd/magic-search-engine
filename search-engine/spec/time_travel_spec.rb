@@ -32,7 +32,7 @@ describe "Time Travel Test" do
     assert_search_results "time:m11 f:modern rancor"
   end
 
-  it "time travel eternal formats accept all sets" do
+  it "time travel eternal formats accept all black border sets (even UNF)" do
     assert_search_equal "f:legacy t:jace", "t:jace"
     assert_search_equal "f:legacy time:nph t:jace", "time:nph t:jace"
     assert_search_equal "f:vintage t:jace", "t:jace"
@@ -54,7 +54,7 @@ describe "Time Travel Test" do
 
   it "time travel scoped" do
     assert_search_equal "(time:KLD f:standard) not (time:AER f:standard)",
-      "(Emrakul, the Promised End) or (time:OGW Reflector Mage) or (Smuggler's Copter)"
+      "(Emrakul, the Promised End) or (time:OGW Reflector Mage) or (Smuggler's Copter -e:nec -e:sld)"
     # Reprints complicate this
     assert_search_equal_cards "(time:OGW f:Standard) not (time:SOI f:Standard)",
       "(e:KTK or e:FRF) -t:basic -(Act of Treason) -(Dutiful Return) -(Naturalize)

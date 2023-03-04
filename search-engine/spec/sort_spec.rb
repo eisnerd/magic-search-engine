@@ -20,7 +20,6 @@ describe "Sorting" do
       ["Chandra, Flame's Catalyst"],
       ["Chandra, Flame's Fury"],
       ["Chandra, Flamecaller"],
-      ["Chandra, Gremlin Wrangler"],
       ["Chandra, Heart of Fire"],
       ["Chandra, Novice Pyromancer"],
       ["Chandra, Pyrogenius"],
@@ -44,7 +43,6 @@ describe "Sorting" do
       ["Chandra, Flamecaller", "Jason Rainville"],
       ["Chandra, Heart of Fire", "Jason Rainville"],
       ["Chandra, Pyrogenius", "Jason Rainville"],
-      ["Chandra, Gremlin Wrangler", "Kari Christensen"],
       ["Chandra, Flame's Fury", "Magali Villeneuve"],
       ["Chandra, Torch of Defiance", "Magali Villeneuve"],
       ["Chandra, Fire Artisan", "Ryota-H"],
@@ -71,15 +69,14 @@ describe "Sorting" do
       ["Chandra, the Firebrand", "m13"],
       ["Chandra Nalaar", "m11"],
       ["Chandra Ablaze", "zen"],
-      ["Chandra, Gremlin Wrangler", "htr16"],
     ])
   end
 
   it "newall" do
     ordered_search("t:chandra -is:digital -is:promo -e:sld time=2021-11-01 sort:newall", :name, :set_code).should eq([
+      ["Chandra, Torch of Defiance", "q06"],
       ["Chandra, Flame's Catalyst", "m21"],
       ["Chandra, Heart of Fire", "m21"],
-      ["Chandra, Torch of Defiance", "ss3"],
       ["Chandra, Flamecaller", "c20"],
       ["Chandra, Acolyte of Flame", "m20"],
       ["Chandra, Awakened Inferno", "m20"],
@@ -88,7 +85,6 @@ describe "Sorting" do
       ["Chandra, Fire Artisan", "war"],
       ["Chandra, Bold Pyromancer", "dom"],
       ["Chandra, Roaring Flame", "v17"],
-      ["Chandra, Gremlin Wrangler", "htr16"],
       ["Chandra, Pyromaster", "e01"],
       ["Chandra, Pyrogenius", "kld"],
       ["Chandra Nalaar", "jvc"],
@@ -120,7 +116,6 @@ describe "Sorting" do
       ["Chandra, Novice Pyromancer", "m20"],
       ["Chandra, Flame's Catalyst", "m21"],
       ["Chandra, Heart of Fire", "m21"],
-      ["Chandra, Gremlin Wrangler", "htr16"],
     ])
   end
 
@@ -134,7 +129,6 @@ describe "Sorting" do
       ["Chandra, Flamecaller", "ogw"],
       ["Chandra, Pyrogenius", "kld"],
       ["Chandra, Torch of Defiance", "kld"],
-      ["Chandra, Gremlin Wrangler", "htr16"],
       ["Chandra, Bold Pyromancer", "dom"],
       ["Chandra, Fire Artisan", "war"],
       ["Chandra, Acolyte of Flame", "m20"],
@@ -158,7 +152,6 @@ describe "Sorting" do
       ["Chandra Nalaar", 5],
       ["Chandra, Heart of Fire", 5],
       ["Chandra, Fire Artisan", 4],
-      ["Chandra, Gremlin Wrangler", 4],
       ["Chandra, Novice Pyromancer", 4],
       ["Chandra, Pyromaster", 4],
       ["Chandra, Torch of Defiance", 4],
@@ -173,7 +166,6 @@ describe "Sorting" do
       ["Chandra, Acolyte of Flame", 3],
       ["Chandra, Roaring Flame", 3],
       ["Chandra, Fire Artisan", 4],
-      ["Chandra, Gremlin Wrangler", 4],
       ["Chandra, Novice Pyromancer", 4],
       ["Chandra, Pyromaster", 4],
       ["Chandra, Torch of Defiance", 4],
@@ -202,7 +194,6 @@ describe "Sorting" do
       ["Chandra Nalaar", 5],
       ["Chandra, Heart of Fire", 5],
       ["Chandra, Fire Artisan", 4],
-      ["Chandra, Gremlin Wrangler", 4],
       ["Chandra, Novice Pyromancer", 4],
       ["Chandra, Pyromaster", 4],
       ["Chandra, Torch of Defiance", 4],
@@ -217,7 +208,6 @@ describe "Sorting" do
       ["Chandra, Acolyte of Flame", 3],
       ["Chandra, Roaring Flame", 3],
       ["Chandra, Fire Artisan", 4],
-      ["Chandra, Gremlin Wrangler", 4],
       ["Chandra, Novice Pyromancer", 4],
       ["Chandra, Pyromaster", 4],
       ["Chandra, Torch of Defiance", 4],
@@ -240,7 +230,6 @@ describe "Sorting" do
       ["Chandra Nalaar", "dd2", "34"],
       ["Chandra, Bold Pyromancer", "dom", "275"],
       ["Chandra, Pyromaster", "e01", "42"],
-      ["Chandra, Gremlin Wrangler", "htr16", "1"],
       ["Chandra, Torch of Defiance", "kld", "110"],
       ["Chandra, Pyrogenius", "kld", "265"],
       ["Chandra, the Firebrand", "m12", "124"],
@@ -273,7 +262,6 @@ describe "Sorting" do
       ["Chandra, the Firebrand", "m13", "123"],
       ["Chandra Nalaar", "m11", "127"],
       ["Chandra, Pyrogenius", "kld", "265"],
-      ["Chandra, Gremlin Wrangler", "htr16", "1"],
       ["Chandra, Bold Pyromancer", "dom", "275"],
     ])
   end
@@ -323,7 +311,6 @@ describe "Sorting" do
       ["Chandra, Torch of Defiance", 4],
       ["Chandra, Pyromaster", 4],
       ["Chandra, Novice Pyromancer", 4],
-      ["Chandra, Gremlin Wrangler", 4],
       ["Chandra, Fire Artisan", 4],
       ["Chandra, Roaring Flame", 3],
       ["Chandra, Acolyte of Flame", 3],
@@ -342,8 +329,32 @@ describe "Sorting" do
     ])
   end
 
+  it "sort:pow" do
+    ordered_search("e:kld r:mythic t:artifact sort:power", :name, :power, proc{|c| c.types.include?("vehicle")}).should eq([
+      ["Combustible Gearhulk", 6, false],
+      ["Skysovereign, Consul Flagship", 6, true],
+      ["Noxious Gearhulk", 5, false],
+      ["Torrential Gearhulk", 5, false],
+      ["Cataclysmic Gearhulk", 4, false],
+      ["Verdurous Gearhulk", 4, false],
+      ["Aetherworks Marvel", nil, false],
+    ])
+  end
+
   it "sort:tou" do
     ordered_search("e:kld r:mythic t:artifact sort:tou", :name, :toughness, proc{|c| c.types.include?("vehicle")}).should eq([
+      ["Combustible Gearhulk", 6, false],
+      ["Torrential Gearhulk", 6, false],
+      ["Cataclysmic Gearhulk", 5, false],
+      ["Skysovereign, Consul Flagship", 5, true],
+      ["Noxious Gearhulk", 4, false],
+      ["Verdurous Gearhulk", 4, false],
+      ["Aetherworks Marvel", nil, false],
+    ])
+  end
+
+  it "sort:toughness" do
+    ordered_search("e:kld r:mythic t:artifact sort:toughness", :name, :toughness, proc{|c| c.types.include?("vehicle")}).should eq([
       ["Combustible Gearhulk", 6, false],
       ["Torrential Gearhulk", 6, false],
       ["Cataclysmic Gearhulk", 5, false],
@@ -375,8 +386,15 @@ describe "Sorting" do
     ])
   end
 
-  it "random" do
+  it "sort:rand" do
     results1 = search("t:creature sort:rand")
+    results2 = search("t:creature sort:name")
+    results1.should_not eq(results2)
+    results1.sort.should eq(results2.sort)
+  end
+
+  it "sort:random" do
+    results1 = search("t:creature sort:random")
     results2 = search("t:creature sort:name")
     results1.should_not eq(results2)
     results1.sort.should eq(results2.sort)

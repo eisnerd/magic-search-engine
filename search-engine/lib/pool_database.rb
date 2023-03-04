@@ -25,6 +25,7 @@ class PoolDatabase
       })
       sideboard = (deck["sideboard"] || []).map{|c| resolve_card(*c) }
       commander = (deck["commander"] || []).map{|c| resolve_card(*c) }
+      display = deck["display"]
       date = deck["release_date"]
       date = date ? Date.parse(date) : nil
       deck = PreconDeck.new(
@@ -35,6 +36,7 @@ class PoolDatabase
         cards,
         sideboard,
         commander,
+	display,
       )
       @db.pools << deck
     end

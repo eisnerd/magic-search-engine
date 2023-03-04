@@ -5,151 +5,360 @@ require_relative "ban_list"
 require_relative "legality_information"
 
 class Card
-  ABILITY_WORD_LIST = (
-    [
-      "Adamant",
-      "Addendum",
-      "Battalion",
-      "Bloodrush",
-      "Channel",
-      "Chroma",
-      "Cohort",
-      "Constellation",
-      "Converge",
-      "Council's dilemma",
-      "Coven",
-      "Delirium",
-      "Domain",
-      "Eminence",
-      "Enrage",
-      "Fateful hour",
-      "Ferocious",
-      "Formidable",
-      "Gotcha",
-      "Grandeur",
-      "Hellbent",
-      "Hero's Reward",
-      "Heroic",
-      "Imprint",
-      "Inspired",
-      "Join forces",
-      "Kinfall",
-      "Kinship",
-      "Landfall",
-      "Landship",
-      "Legacy",
-      "Lieutenant",
-      "Magecraft",
-      "Metalcraft",
-      "Morbid",
-      "Parley",
-      "Radiance",
-      "Raid",
-      "Rally",
-      "Requirement",
-      "Revolt",
-      "Spell mastery",
-      "Strive",
-      "Sweep",
-      "Teamwork",
-      "Tempting offer",
-      "Threshold",
-      "Underdog",
-      "Undergrowth",
-      "Will of the council",
-    ] + [
-      # AFR flavor words
-      "Acid Breath",
-      "Animate Walking Statue",
-      "Beacon of Hope",
-      "Bear Form",
-      "Bewitching Whispers",
-      "Binding Contract",
-      "Circle of Death",
-      "Climb Over",
-      "Cold Breath",
-      "Combat Inspiration",
-      "Cone of Cold",
-      "Cunning Action",
-      "Dark One's Own Luck",
-      "Displacement",
-      "Dissolve",
-      "Divine Intervention",
-      "Dominate Monster",
-      "Drag Below",
-      "Engulf",
-      "Fire Breath",
-      "Flurry of Blows",
-      "Grant an Advantage",
-      "Invoke Duplicity",
-      "Keen Senses",
-      "Life Drain",
-      "Lightning Breath",
-      "Mage Hand",
-      "Magical Tinkering",
-      "Pack tactics",
-      "Poison Breath",
-      "Psionic Spells",
-      "Rappel Down",
-      "Rejuvenation",
-      "Search the Room",
-      "Siege Monster",
-      "Sneak Attack",
-      "Split",
-      "Stunning Strike",
-      "Tail Spikes",
-      "Teleport",
-      "Tie Up",
-      "Tragic Backstory",
-      "Whirlwind",
-      "Whispers of the Grave",
-      "Wild Magic Surge",
-    ] + [
-      # AFR Dungeon Rooms
-      "Cave Entrance",
-      "Cradle of the Death God",
-      "Dark Pool",
-      "Deep Mines",
-      "Dungeon Level",
-      "Fungi Cavern",
-      "Goblin Bazaar",
-      "Goblin Lair",
-      "Lost Level",
-      "Mad Wizard's Lair",
-      "Mine Tunnels",
-      "Muiral's Graveyard",
-      "Oubliette",
-      "Runestone Caverns",
-      "Sandfall Cell",
-      "Storeroom",
-      "Temple of Dumathoin",
-      "Trapped Entry",
-      "Twisted Caverns",
-      "Veils of Fear",
-      "Yawning Portal",
-    ] + [
-      # AFC flavor words
-      "Astral Projection",
-      "Berserk",
-      "Create Undead",
-      "Focus Beam",
-      "Mystic Arcanum",
-      "Negative Energy Cone",
-      "Pact Boon",
-      "Perfect Illumination",
-    ]
-  ).sort
+  ABILITY_WORD_LIST = [
+    # Normal
+    "Adamant",
+    "Addendum",
+    "Alliance",
+    "Battalion",
+    "Bloodrush",
+    "Channel",
+    "Chroma",
+    "Cohort",
+    "Constellation",
+    "Converge",
+    "Council's dilemma",
+    "Coven",
+    "Corrupted",
+    "Delirium",
+    "Domain",
+    "Eminence",
+    "Enrage",
+    "Fateful hour",
+    "Ferocious",
+    "Formidable",
+    "Gotcha",
+    "Grandeur",
+    "Hellbent",
+    "Hero's Reward",
+    "Heroic",
+    "Imprint",
+    "Inspired",
+    "Join forces",
+    "Kinfall",
+    "Kinship",
+    "Landfall",
+    "Landship",
+    "Legacy",
+    "Lieutenant",
+    "Magecraft",
+    "Metalcraft",
+    "Morbid",
+    "Parley",
+    "Radiance",
+    "Raid",
+    "Rally",
+    "Requirement",
+    "Revolt",
+    "Spell mastery",
+    "Strive",
+    "Sweep",
+    "Teamwork",
+    "Tempting offer",
+    "Threshold",
+    "Underdog",
+    "Undergrowth",
+    "Will of the council",
+    # AFR flavor words
+    "Acid Breath",
+    "Animate Walking Statue",
+    "Beacon of Hope",
+    "Bear Form",
+    "Bewitching Whispers",
+    "Binding Contract",
+    "Circle of Death",
+    "Climb Over",
+    "Cold Breath",
+    "Combat Inspiration",
+    "Cone of Cold",
+    "Cunning Action",
+    "Dark One's Own Luck",
+    "Displacement",
+    "Dissolve",
+    "Divine Intervention",
+    "Dominate Monster",
+    "Drag Below",
+    "Engulf",
+    "Fire Breath",
+    "Flurry of Blows",
+    "Grant an Advantage",
+    "Invoke Duplicity",
+    "Keen Senses",
+    "Life Drain",
+    "Lightning Breath",
+    "Mage Hand",
+    "Magical Tinkering",
+    "Pack tactics",
+    "Poison Breath",
+    "Psionic Spells",
+    "Rappel Down",
+    "Rejuvenation",
+    "Search the Room",
+    "Siege Monster",
+    "Sneak Attack",
+    "Split",
+    "Stunning Strike",
+    "Tail Spikes",
+    "Teleport",
+    "Tie Up",
+    "Tragic Backstory",
+    "Whirlwind",
+    "Whispers of the Grave",
+    "Wild Magic Surge",
+    # AFR Dungeon Rooms
+    "Cave Entrance",
+    "Cradle of the Death God",
+    "Dark Pool",
+    "Deep Mines",
+    "Dungeon Level",
+    "Fungi Cavern",
+    "Goblin Bazaar",
+    "Goblin Lair",
+    "Lost Level",
+    "Mad Wizard's Lair",
+    "Mine Tunnels",
+    "Muiral's Graveyard",
+    "Oubliette",
+    "Runestone Caverns",
+    "Sandfall Cell",
+    "Storeroom",
+    "Temple of Dumathoin",
+    "Trapped Entry",
+    "Twisted Caverns",
+    "Veils of Fear",
+    "Yawning Portal",
+    # AFC flavor words
+    "Astral Projection",
+    "Berserk",
+    "Create Undead",
+    "Focus Beam",
+    "Mystic Arcanum",
+    "Negative Energy Cone",
+    "Pact Boon",
+    "Perfect Illumination",
+    # SLD Street Fighter
+    # These are printed on actual cards, but not on their SLX equivalents
+    # so Oracle doesn't include any of them
+    # "Electric Thunder",
+    # "Fierce Punch",
+    # "Hadoken",
+    # "Hundred Hand Slap",
+    # "Iron Muscle",
+    # "Lightning Kick",
+    # "Rolling Attack",
+    # "Shoryuken",
+    # "Spinning Piledriver",
+    # "Sumo Spirit",
+    # CLB flavor words
+    "Aberrant Tinkering",
+    "Animate Chains",
+    "Avoidance",
+    "Bigby's Hand",
+    "Blood Drain",
+    "Body Thief",
+    "Ceremorphosis",
+    "Confounding Clouds",
+    "Conjure Elemental",
+    "Crown of Madness",
+    "Devour Intellect",
+    "Enthralling Performance",
+    "Gathered Swarm",
+    "Gust of Wind",
+    "Hive Mind",
+    "Homunculus Servant",
+    "Horrific Symbiosis",
+    "Infesting Spores",
+    "Keen Sight",
+    "Loud Ruckus",
+    "Lure the Unwary",
+    "Mama's Coming",
+    "Mantle of Inspiration",
+    "Mold Earth",
+    "Mold Harvest",
+    "Natural Recovery",
+    "Natural Shelter",
+    "Probing Telepathy",
+    "Project Image",
+    "Protection Fighting Style",
+    "Psychic Blades",
+    "Psychic Defense",
+    "Scorching Ray",
+    "Sleight of Hand",
+    "Spiked Retribution",
+    "Toxic Spores",
+    "Vicious Mockery",
+    "Weird Insight",
+    "Wind Walk",
+    # HBG flavor words
+    "Calim's Breath",
+    "Gift of Tiamat",
+    "Molting Exoskeleton",
+    "Psionic Adept",
+    "Rage Beyond Death",
+    "Wild Shape",
+    # CLB Dungeon
+    "Archives",
+    "Arena",
+    "Catacombs",
+    "Forge",
+    "Lost Well",
+    "Secret Entrance",
+    "Stash",
+    "Throne of the Dead Three",
+    # 40K
+    "A Thousand Souls Die Every Day",
+    "Advanced Species",
+    "Aegis of the Emperor",
+    "Allure of Slaanesh",
+    "Architect of Deception",
+    "Armour of Shrieking Souls",
+    "Atomic Transmutation",
+    "Battle Cannon",
+    "Benediction of the Omnissiah",
+    "Berzerker",
+    "Blade of Magnus",
+    "Blood Chalice",
+    "Brood Telepathy",
+    "Chainsword",
+    "Chapter Master",
+    "Children of the Cult",
+    "Command Protocols",
+    "Command Section",
+    "Concealed Position",
+    "Coruscating Flames",
+    "Crushing Teeth",
+    "Curse of the Walking Pox",
+    "Daemon Sword",
+    "Death Frenzy",
+    "Devastating Charge",
+    "Devourer of Souls",
+    "Devouring Monster",
+    "Drain Life",
+    "Dynastic Advisor",
+    "Dynastic Codes",
+    "Dynastic Command Node",
+    "Echo of the First Murder",
+    "Elite Troops",
+    "Endless Swarm",
+    "Endurant",
+    "Enmitic Exterminator",
+    "Eternity Gate",
+    "Exile Cannon",
+    "Fabricator Claw Array",
+    "Fallen Warrior",
+    "Fast Healing",
+    "Feeder Mandibles",
+    "Field Reprogramming",
+    "Fire of Tzeentch",
+    "Flesh Flayer",
+    "Flesh Hooks",
+    "Frenzied Metabolism",
+    "Frenzied Rampage",
+    "Gatling Blaster",
+    "Genestealer's Kiss",
+    "Genomic Enhancement",
+    "Gift of Chaos",
+    "Grand Strategist",
+    "Guardian Protocols",
+    "Harbinger of Despair",
+    "Healing Tears",
+    "Heavy Power Hammer",
+    "Heavy Rock Cutter",
+    "Hunt for Heresy",
+    "Hyperphase Threshers",
+    "Hypertoxic Miasma",
+    "Inquisition Agents",
+    "Invasion Beams",
+    "Jolly Gutpipes",
+    "Leading from the Front",
+    "Locus of Slaanesh",
+    "Lord of Chaos",
+    "Lord of Torment",
+    "Lord of the Pyrrhian Legions",
+    "Mark of Chaos Ascendant",
+    "Martyrdom",
+    "Master Tactician",
+    "Master of Machines",
+    "Matter Absorption",
+    "Medicus Ministorum",
+    "My Will Be Done",
+    "Neurotraumal Rod",
+    "Phaeron",
+    "Phalanx Commander",
+    "Pheromone Trail",
+    "Plasma Incinerator",
+    "Polymorphine",
+    "Praesidium Protectiva",
+    "Primarch of the Death Guard",
+    "Prince of Chaos",
+    "Prismatic Gallery",
+    "Proclamator Hailer",
+    "Protector",
+    "Psychic Abomination",
+    "Psychic Stimulus",
+    "Rapacious Hunger",
+    "Rapid Regeneration",
+    "Relentless March",
+    "Repair Barge",
+    "Reverberating Summons",
+    "Rites of Banishment",
+    "Rogue Trader",
+    "Rosarius",
+    "Rot Fly",
+    "Ruinous Ascension",
+    "Sarcophagus",
+    "Scavenge the Dead",
+    "Secrets of the Soul",
+    "Shieldwall",
+    "Shrieking Gargoyles",
+    "Sigil of Corruption",
+    "Skilled Outrider",
+    "Skyswarm",
+    "Sonic Blaster",
+    "Sorcerous Elixir",
+    "Sorcerous Inspiration",
+    "Spawn Termagants",
+    "Spear of the Void Dragon",
+    "Spiritual Leader",
+    "Spore Chimney",
+    "Stowage",
+    "Strategic Coordinator",
+    "Subterranean Assault",
+    "Summary Execution",
+    "Suppressing Fire",
+    "Symphony of Pain",
+    "Synapse Creature",
+    "Synaptic Disintegrator",
+    "Targeting Relay",
+    "Terror from the Deep",
+    "The Betrayer",
+    "The Will of the Hive Mind",
+    "Three Autostubs",
+    "Titanic",
+    "Transdimensional Scout",
+    "Translocation Protocols",
+    "Ultima Founding",
+    "Unearthly Power",
+    "Unquestionable Wisdom",
+    "Vanguard Species",
+    "Veil of Time",
+    "Void Shields",
+    "Warp Blast",
+    "Warp Vortex",
+    "Wraith Form",
+    "Xenos Cunning",
+  ].sort
   ABILITY_WORD_RX = %r[^(#{Regexp.union(ABILITY_WORD_LIST)}) —]i
 
   attr_reader :data, :printings
   attr_writer :printings # For db subset
 
   attr_reader :name, :names, :layout, :colors, :mana_cost, :reserved, :types
-  attr_reader :partial_color_identity, :cmc, :text, :text_normalized, :power, :toughness, :loyalty, :extra
+  attr_reader :color_identity, :cmc, :text, :text_normalized, :power, :toughness, :loyalty, :extra
   attr_reader :hand, :life, :rulings, :foreign_names, :foreign_names_normalized, :stemmed_name
   attr_reader :mana_hash, :typeline, :funny, :color_indicator, :color_indicator_set, :related
   attr_reader :reminder_text, :augment, :display_power, :display_toughness, :display_mana_cost, :keywords
-  attr_reader :commander, :brawler
+  attr_reader :commander, :brawler, :fulltext, :fulltext_normalized
 
   def initialize(data)
     @printings = []
@@ -158,9 +367,12 @@ class Card
     @names = data["names"]
     @layout = data["layout"]
     @colors = data["colors"] || ""
+    @color_identity = data["ci"]
     @funny = data["funny"]
-    @text = (data["text"] || "")
-    @text = @text.gsub(/\s*\([^\(\)]*\)/, "") unless @funny
+    @fulltext = -(data["text"] || "")
+    @fulltext_normalized = -@fulltext.normalize_accents
+    @text = @fulltext
+    @text = @text.gsub(/\s*\([^\(\)]*\)/, "") unless @funny or @layout == "dungeon"
     @text = -@text.sub(/\s*\z/, "").gsub(/ *\n/, "\n").sub(/\A\s*/, "")
     @text_normalized = -@text.normalize_accents
     @augment = !!(@text =~ /augment \{/i)
@@ -176,7 +388,6 @@ class Card
     @display_power = data["display_power"] ? data["display_power"] : @power
     @display_toughness = data["display_toughness"] ? data["display_toughness"] : @toughness
     @display_mana_cost = data["hide_mana_cost"] ? nil : @mana_cost
-    @partial_color_identity = calculate_partial_color_identity
     if ["vanguard", "planar", "scheme"].include?(@layout) or @types.include?("conspiracy")
       @extra = true
     else
@@ -230,14 +441,6 @@ class Card
 
   def secondary?
     @secondary
-  end
-
-  attr_writer :color_identity
-  def color_identity
-    @color_identity ||= begin
-      return partial_color_identity unless @names
-      raise "Multi-part cards need to have CI set by database"
-    end
   end
 
   def custom?
@@ -318,6 +521,17 @@ class Card
     @count_papersets ||= printings.select(&:paper?).map(&:set).uniq.size
   end
 
+  def name_slug
+    name
+      .normalize_accents
+      .gsub("'s", "s")
+      .gsub("I'm", "Im")
+      .gsub("You're", "Youre")
+      .gsub("R&D", "RnD")
+      .gsub(/[^a-zA-Z0-9\-]+/, "-")
+      .gsub(/(\A-)|(-\z)/, "")
+  end
+
   private
 
   def calculate_mana_hash
@@ -342,6 +556,8 @@ class Card
       when /\A([wubrg])\/p\z/
         @mana_hash[normalize_mana_symbol(m)] += 1
       when /\A2\/([wubrg])\z/
+        @mana_hash[normalize_mana_symbol(m)] += 1
+      when /\A([wubrg])\/([wubrg])\/p\z/
         @mana_hash[normalize_mana_symbol(m)] += 1
       else
         raise "Unrecognized mana type: #{m}"
@@ -385,47 +601,6 @@ class Card
     else
       val.to_f
     end
-  end
-
-  def calculate_partial_color_identity
-    ci = colors.chars
-    "#{mana_cost} #{text}".scan(/{(.*?)}/).each do |sym,|
-      case sym.downcase
-      when /\A(\d+|[½∞txyzsqpcea])\z/
-        # 12xyz - colorless
-        # ½∞ - unset colorless
-        # t - tap
-        # q - untap
-        # s - snow
-        # p - generic Phyrexian mana (like on Rage Extractor text)
-        # c - colorless mana
-        # e - energy
-        # a - acorn
-      when /\A([wubrg])\z/
-        ci << $1
-      when /\A([wubrg])\/p\z/
-        # Phyrexian mana
-        ci << $1
-      when /\Ah([wubrg])\z/
-        # Unset half colored mana
-        ci << $1
-      when /\A2\/([wubrg])\z/
-        ci << $1
-      when /\A([wubrg])\/([wubrg])\z/
-        ci << $1 << $2
-      when "chaos"
-        # planechase special symbol, disregard
-      when "+1"
-        # loyaty symbol, on Carth the Lion
-      else
-        raise "Unknown mana symbol `#{sym}'"
-      end
-    end
-    types.each do |t|
-      tci = {"forest" => "g", "mountain" => "r", "plains" => "w", "island" => "u", "swamp" => "b"}[t]
-      ci << tci if tci
-    end
-    -ci.sort.uniq.join
   end
 
   def calculate_color_indicator
@@ -500,6 +675,16 @@ class Card
         "{R}, {W}, or {B}"
       when "forest island swamp"
         "{B}, {G}, or {U}"
+      when "forest mountain plains"
+        "{R}, {G}, or {W}"
+      when "island plains swamp"
+        "{W}, {U}, or {B}"
+      when "forest island plains"
+        "{G}, {W}, or {U}"
+      when "island mountain swamp"
+        "{U}, {B}, or {R}"
+      when "forest mountain swamp"
+        "{B}, {R}, or {G}"
       else
         raise "No idea what's correct line for #{basic_land_types.inspect}"
       end

@@ -97,4 +97,29 @@ BanList.for_format("pauper") do
     "Chatterstorm" => "banned",
     "Sojourner's Companion" => "banned",
   )
+
+  change(
+    "2022-01-21",
+    "https://magic.wizards.com/en/articles/archive/news/january-20-2022-banned-and-restricted-announcement",
+    "Atog" => "banned",
+    "Bonder's Ornament" => "banned",
+    "Prophetic Prism" => "banned",
+  )
+
+  change(
+    "2022-03-07",
+    "https://magic.wizards.com/en/articles/archive/news/march-7-2022-banned-and-restricted-announcement",
+    "Galvanic Relay" => "banned",
+    "Disciple of the Vault" => "banned",
+    "Expedition Map" => "legal",
+  )
+
+  change(
+    "2022-09-19",
+    "https://magic.wizards.com/en/articles/archive/news/september-19-2022-banned-and-restricted-announcement",
+    "Aarakocra Sneak" => "banned",
+    "Stirring Bard" => "banned",
+    "Underdark Explorer" => "banned",
+    "Vicious Battlerager" => "banned",
+  )
 end

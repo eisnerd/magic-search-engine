@@ -1,6 +1,10 @@
 describe "Full Database Test" do
   include_context "db"
 
+  def legality_information(name, date = nil)
+    db.cards[name.downcase].legality_information(date)
+  end
+
   # There's no point checking db.number_of_cards / db.number_of_printings, uuid index will flag any unexpected changes
 
   it "is:promo" do
@@ -64,7 +68,8 @@ describe "Full Database Test" do
       "Rimrock Knight", "Boulder Rush",
       "Shepherd of the Flock", "Usher to Safety",
       "Smitten Swordmaster", "Curry Favor",
-      "Smelt (CMB1)", "Herd", "Saw"
+      "Smelt (CMB1)", "Herd", "Saw",
+      "Ghost Lantern", "Bind Spirit"
     # Semantics of that changed
     # it used to match a lot of double-faced cards
     # then it all disappeared as DFCs share cmc
@@ -159,8 +164,7 @@ describe "Full Database Test" do
       "Chandra Ablaze"
     assert_search_results "t:planeswalker lastprint<=2011",
       "Ajani Goldmane",
-      "Chandra Ablaze",
-      "Elspeth Tirel"
+      "Chandra Ablaze"
   end
 
   it "alt a" do
@@ -194,7 +198,7 @@ describe "Full Database Test" do
 
   it "alt rarity" do
     assert_search_include "r:common alt:r:uncommon", "Doom Blade"
-    assert_search_results "r:common -is:digital alt:(r:mythic -is:digital)",
+    assert_search_results "r:common -is:digital -e:sld alt:(r:mythic -is:digital -e:sld)",
       "Cabal Ritual",
       "Capsize",
       "Chain Lightning",
@@ -211,6 +215,7 @@ describe "Full Database Test" do
       "Kird Ape",
       "Lotus Petal",
       "Ornithopter",
+      "Sol Ring",
       "Spell Pierce"
   end
 
@@ -224,6 +229,7 @@ describe "Full Database Test" do
       "Abyssal Nocturnus",
       "Abyssal Persecutor",
       "Abyssal Specter",
+      "Gale, Abyssal Conduit",
       "Magus of the Abyss",
       "Peer into the Abyss",
       "Reaper from the Abyss",
@@ -263,7 +269,7 @@ describe "Full Database Test" do
     assert_search_equal "mana=mno", "mana={m}{n}{o}"
     assert_search_equal "mana=mmn", "mana=mnn"
     assert_search_equal "mana=mmn", "mana>=mnn mana <=mmn"
-    assert_count_cards "mana>=mh", 20
+    assert_count_cards "mana>=mh", 25
     assert_search_results "mana=mh",
       "Bant Sureblade",
       "Crystallization",
@@ -320,10 +326,8 @@ describe "Full Database Test" do
     assert_search_equal "is:permanent", "not (t:instant or t:sorcery or t:plane or t:scheme or t:phenomenon or t:conspiracy or t:vanguard)"
   end
 
-  it "promo and special" do
-    # warn "not sure what to do with rarity special (v4 no longer uses it, should we?)"
-    # it's back in v5 now ???
-    assert_search_equal "r:special -e:tsr,plist", "(Super Secret Tech) or (e:vma r:special) or (e:tsb) or (Prismatic Piper)"
+  it "r:special" do
+    assert_search_equal "r:special -e:tsr,plist,pewk,ovnt,olgc", "(Super Secret Tech) or (e:vma r:special) or (e:tsb) or (Prismatic Piper) or (Faceless One)"
     assert_count_cards "r:special e:tsr", 121
   end
 
@@ -390,7 +394,20 @@ describe "Full Database Test" do
     assert_search_results "is:buyabox is:booster"
   end
 
-  def legality_information(name, date = nil)
-    db.cards[name.downcase].legality_information(date)
+  # Some are not amazing
+  it "#name_slug" do
+    db.cards.values.to_h{|c| [c.name, c.name_slug] }.should include(
+      "_____" => "",
+      "\"Ach! Hans, Run!\"" => "Ach-Hans-Run",
+      "\"Rumors of My Death . . .\"" => "Rumors-of-My-Death",
+      "+2 Mace" => "2-Mace",
+      "1996 World Champion" => "1996-World-Champion",
+      "Bind (CMB1)" => "Bind-CMB1",
+      "Jötun Owl Keeper" => "Jotun-Owl-Keeper",
+      "Junún Efreet" => "Junun-Efreet",
+      "Look at Me, I'm R&D" => "Look-at-Me-Im-RnD",
+      "You're in Command" => "Youre-in-Command",
+      "Minsc & Boo, Timeless Heroes" => "Minsc-Boo-Timeless-Heroes",
+    )
   end
 end

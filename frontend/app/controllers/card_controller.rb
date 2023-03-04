@@ -70,11 +70,10 @@ class CardController < ApplicationController
       logger.info "PAGINATED #{params.inspect} BY USERAGENT: #{request.headers['HTTP_USER_AGENT']}"
     end
 
-    if request.headers['HTTP_USER_AGENT'] =~ /MJ12bot/ and params[:page]
+    if request.headers['HTTP_USER_AGENT'] =~ /MJ12bot|PetalBot/ and params[:page]
       render_403
       return
     end
-
     # End of temporary bot code
 
     @title =
@@ -91,7 +90,9 @@ class CardController < ApplicationController
       choose_best_printing(printings)
     end
 
-    case query.view
+    view_mode = query.view || cookies["default_view"] || "default"
+
+    case view_mode
     when "full"
       # force detailed view
       @cards = @cards.paginate(page: page, per_page: 10)

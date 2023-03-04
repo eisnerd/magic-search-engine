@@ -21,24 +21,32 @@ describe "CLI Frontend" do
         Cinder Glade
         Dryad Arbor
         Forest
+        Gate to Manorborn
         Gingerbread Cabin
+        Haunted Mire
         Highland Forest
         Indatha Triome
+        Jetmir's Garden
         Ketria Triome
         Murmuring Bosk
         Overgrown Tomb
+        Radiant Grove
         Rimewood Falls
         Sapseep Forest
         Savannah
         Scattered Groves
         Sheltered Thicket
         Snow-Covered Forest
+        Spara's Headquarters
         Stomping Ground
         Taiga
+        Tangled Islet
         Temple Garden
         Tropical Island
+        Wooded Ridgeline
         Woodland Chasm
         Zagoth Triome
+        Ziatora's Proving Ground
         EOF
       error: ""
     )
@@ -64,7 +72,7 @@ describe "CLI Frontend" do
       verbose: true,
       output: <<-EOF,
         Siege Rhino {1}{w}{b}{g}
-        [ktk pktk cp3 prm]
+        [ktk pktk cp3 prm ea1 slc]
         Creature - Rhino
         Trample
         When Siege Rhino enters the battlefield, each opponent loses 3 life and you gain 3 life.
@@ -93,14 +101,27 @@ describe "CLI Frontend" do
         When Destructor Dragon dies, destroy target noncreature permanent.
         4/4
 
+        Emerald Dragon {4}{g}{g}
+        [clb hbg]
+        Creature - Dragon
+        Flying, trample
+        4/4
+
         Green Dragon {4}{g}{g}
-        [afr afr]
+        [afr afr prm]
         Creature - Dragon
         Flying
         Poison Breath — When Green Dragon enters the battlefield, until end of turn, whenever a creature an opponent controls is dealt damage, destroy it.
         4/4
+
+        Skanos, Green Dragon Vassal {4}{g}{g}
+        [hbg]
+        Legendary Creature - Dragon Ranger
+        Vigilance
+        Whenever Skanos, Green Dragon Vassal attacks, untap another target attacking creature. It gets +X/+0 until end of turn, where X is Skanos's power.
+        6/6
         EOF
-      error: ""
+        error: ""
     )
   end
 
@@ -110,7 +131,7 @@ describe "CLI Frontend" do
       verbose: true,
       output: <<-EOF,
         Transguild Courier {4}
-        [dis]
+        [dis dmc]
         Artifact Creature - Golem
         Transguild Courier is all colors.
         3/3
@@ -144,7 +165,7 @@ describe "CLI Frontend" do
       verbose: true,
       output: <<-EOF,
         Steam Vents
-        [gpt rtr exp grn pgrn prm sld]
+        [gpt rtr exp grn pgrn prm sld unf unf]
         Land - Island Mountain
         ({T}: Add {U} or {R}.)
         As Steam Vents enters the battlefield, you may pay 2 life. If you don't, it enters the battlefield tapped.
@@ -159,7 +180,7 @@ describe "CLI Frontend" do
       verbose: true,
       output: <<-EOF,
         Bloodbraid Elf {2}{r}{g}
-        [-arb +f10 +pc2 +prm -ema -c16 +pca +mb1 -tsr]
+        [-arb +f10 +pc2 +prm -ema -c16 +pca +mb1 -tsr -clb -2x2 -2x2 -prm -slc]
         Creature - Elf Berserker
         Haste
         Cascade

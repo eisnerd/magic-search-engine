@@ -30,12 +30,12 @@ describe "Magic 2010" do
     assert_search_include "c:u", "Ponder"
     assert_search_include "c!u", "Ponder"
     "c:ub".should return_no_cards
-    assert_search_equal "c:ucm", "c:c" # Questionable
+    "c:ucm".should return_no_cards
     assert_search_include "c:c", "Howling Mine"
     assert_search_exclude "c:g", "Ponder"
     "c!bu".should return_no_cards
     "c:m".should return_no_cards
-    assert_search_exclude "c:gcm", "Ponder"
+    "c:gcm".should return_no_cards
 
     # Only true for core sets
     assert_search_equal "c:c", "t:artifact or t:land"
@@ -118,8 +118,16 @@ describe "Magic 2010" do
       "Birds of Paradise"
   end
 
-  it "oracle_ignores_remainder_text" do
+  it "oracle ignores remainder text" do
     assert_search_results "c:g o:flying", "Birds of Paradise", "Windstorm"
+  end
+
+  it "full oracle keeps remainder text" do
+    assert_search_results "c:g fo:flying",
+      "Birds of Paradise", # flying
+      "Deadly Recluse",    # reach remainder text
+      "Giant Spider",      # reach remainder text
+      "Windstorm"          # flying
   end
 
   it "oracle_cardname" do

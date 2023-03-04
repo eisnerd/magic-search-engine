@@ -28,7 +28,7 @@ class PatchMtgjsonVersions < Patch
 
     # mtgjson bug
     # https://github.com/mtgjson/mtgjson/issues/818
-    if card["layout"] == "modal_dfc"
+    if card["layout"] == "modal_dfc" or card["layout"] == "reversible_card"
       return calculate_cmc(card["manaCost"] || "")
     end
 
@@ -50,8 +50,25 @@ class PatchMtgjsonVersions < Patch
     cmc
   end
 
+  def assign_number(card)
+    @seen ||= {}
+    set_code = card["set"]["official_code"]
+    base_number = card["number"]
+    counter = "a"
+    while @seen[[set_code, base_number, counter]]
+      counter.succ!
+    end
+    @seen[[set_code, base_number, counter]] = true
+    card["number"] = "#{base_number}#{counter}"
+  end
+
   def call
-    each_printing do |card|
+    # Delete all Alchemy cards
+    delete_printing_if do |card|
+      card["isRebalanced"]
+    end
+
+     each_printing do |card|
       if card["faceName"] and card["name"].include?("//")
         card["names"] = card["name"].split(" // ")
         card["name"] = card.delete("faceName")
@@ -60,6 +77,14 @@ class PatchMtgjsonVersions < Patch
 
     each_printing do |card|
       card["cmc"] = get_cmc(card)
+
+      # I don't know of any better way of handling them
+      # These are two separate cards as far as game rules are concerned
+      if card["layout"] == "reversible_card"
+        card["layout"] = "normal"
+        card.delete "names"
+        assign_number(card)
+      end
 
       # This is text because of some X planeswalkers
       # It's more convenient for us to mix types
@@ -94,14 +119,20 @@ class PatchMtgjsonVersions < Patch
         card["frame_effects"] = [card.delete("frameEffect")]
       end
 
+      # This conflicts with isTextless in annoying ways
+      if card["frame_effects"]
+        card["frame_effects"].delete("textless")
+      end
+
       card["oversized"] = card.delete("isOversized")
       card["spotlight"] = card.delete("isStorySpotlight")
       card["fullart"] = card.delete("isFullArt")
       card["textless"] = card.delete("isTextless")
 
-      # ok, these are technically "display cards" not oversized
+      # OC21/OAFC are technically "display cards" not oversized
       # https://github.com/mtgjson/mtgjson/issues/815
-      if card["set"]["official_code"] == "OC21"
+      # O90P and OLEP are just mtgjson bug
+      if %W[OC21 OAFC O90P OLEP].include?(card["set"]["official_code"])
         card["oversized"] = true
       end
 
@@ -111,12 +142,11 @@ class PatchMtgjsonVersions < Patch
       card["mtgo"] = true if card.delete("isMtgo") or card["availability"]&.delete("mtgo")
 
       # This logic changed at some point, I like old logic better
-      if card["paper"] and card["oversized"]
+      if card["oversized"] or %W[CEI CED 30A].include?(card["set"]["official_code"]) or card["border"] == "gold"
+        card["nontournament"] = true
+        card.delete("arena")
         card.delete("paper")
-      end
-
-      if card["paper"] and card["border"] == "gold"
-        card.delete("paper")
+        card.delete("mtgo")
       end
 
       # Drop v3 layouts, use v4 layout here
@@ -148,6 +178,10 @@ class PatchMtgjsonVersions < Patch
       if card["promoTypes"]&.include?("buyabox")
         card["promoTypes"].delete("buyabox")
         card["buyabox"] = true
+      end
+
+      if card["securityStamp"] == "acorn"
+        card["acorn"] = true
       end
 
       # Unicode vs ASCII

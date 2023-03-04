@@ -1,7 +1,8 @@
 class Patch
-  def initialize(cards, sets)
+  def initialize(cards, sets, decks)
     @cards = cards
     @sets = sets
+    @decks = decks
   end
 
   def each_card(&block)
@@ -60,5 +61,9 @@ class Patch
 
   def set_by_code(code)
     @sets.find{|s| s["code"] == code} or raise "Set not found #{code}"
+  end
+
+  def inspect
+    "#{self.class}"
   end
 end

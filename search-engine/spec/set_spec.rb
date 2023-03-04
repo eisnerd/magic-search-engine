@@ -3,8 +3,10 @@ describe "Sets" do
 
   let(:known_set_types) do
     [
+      "alchemy",
       "archenemy",
       "arena league",
+      "arsenal",
       "booster",
       "box",
       "commander",
@@ -19,13 +21,13 @@ describe "Sets" do
       "fnm",
       "from the vault",
       "funny",
-      "gateway",
       "judge gift",
       "masterpiece",
       "masters",
       "memorabilia",
       "modern",
       "multiplayer",
+      "pioneer",
       "planechase",
       "player rewards",
       "portal",
@@ -40,7 +42,6 @@ describe "Sets" do
       "two-headed giant",
       "un",
       "vanguard",
-      "wpn",
     ].to_set
   end
 

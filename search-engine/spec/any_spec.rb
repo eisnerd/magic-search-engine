@@ -208,7 +208,7 @@ describe "Any queries" do
     end
 
     it "booster" do
-      assert_search_equal "any:booster", "is:booster or o:booster"
+      assert_search_equal "any:booster", "is:booster or o:booster or (Blaster Morale Booster)"
     end
 
     it "promo" do
@@ -232,7 +232,7 @@ describe "Any queries" do
     end
 
     it "unique" do
-      assert_search_equal "any:unique", "is:unique or ft:unique"
+      assert_search_equal "any:unique", "is:unique or ft:unique or o:unique"
     end
 
     it "vanilla" do
@@ -241,7 +241,7 @@ describe "Any queries" do
 
     it "draft" do
       # 4 cards with draft in name
-      assert_search_equal "any:draft", "is:draft or draft"
+      assert_search_equal "any:draft", "is:draft or draft or (o:draft e:ymid,yneo,ysnc,hbg,ydmu,ybro,yone)"
     end
   end
 end

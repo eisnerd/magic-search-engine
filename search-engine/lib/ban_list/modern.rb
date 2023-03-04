@@ -156,4 +156,16 @@ BanList.for_format("modern") do
     "Tibalt's Trickery" => "banned",
     "Uro, Titan of Nature's Wrath" => "banned",
   )
+
+  change(
+    "2022-03-07",
+    "https://magic.wizards.com/en/articles/archive/news/march-7-2022-banned-and-restricted-announcement",
+    "Lurrus of the Dream-Den" => "banned",
+  )
+
+  change(
+    "2022-10-10",
+    "https://magic.wizards.com/en/articles/archive/news/october-10-2022-banned-and-restricted-announcement",
+    "Yorion, Sky Nomad" => "banned",
+  )
 end

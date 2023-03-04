@@ -30,6 +30,11 @@ class FormatPioneer < Format
       "afr",
       "mid",
       "vow",
+      "neo",
+      "snc",
+      "dmu",
+      "bro",
+      "one",
     ]
   end
 end

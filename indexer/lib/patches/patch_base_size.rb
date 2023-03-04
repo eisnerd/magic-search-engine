@@ -3,20 +3,16 @@ class PatchBaseSize < Patch
     # https://github.com/mtgjson/mtgjson/issues/765
     # https://github.com/mtgjson/mtgjson/issues/855
     sizes = {
-      "afc" => 62,
-      "akr" => 338, # 339 is box topper, set has A/Bs too
-      "c20" => 322,
-      "c21" => 81,
-      "cmr" => 361,
       "jmp" => 78,
-      "khm" => 285,
-      "klr" => 301, # 302 is box topper
-      "m21" => 274,
-      "sta" => 63,
       "tsr" => 410, # 289, # THIS IS INCORRECT, need fixes downstream in sealed code
-      "und" => 96,
-      "znr" => 280,
-      "vow" => 277,
+      "dbl" => 534,
+      "2x2" => 331,
+      "dmu" => 281,
+      "brr" => 126, # nothing printed due to old frame
+      "bro" => 287,
+      "dmr" => 261,
+      "one" => 271,
+      "onc" => 28,
     }
 
     sizes.each do |code, size|

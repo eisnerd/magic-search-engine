@@ -18,11 +18,18 @@ Rails.application.routes.draw do
   get "deck/:set/:id/download" => "deck#download"
   get "deck/visualize" => "deck#visualize"
   post "deck/visualize" => "deck#visualize"
+  post "hooks" => "hooks#receive"
   get "deck" => "deck#index"
   get "sealed" => "sealed#index"
   get "pack" => "pack#index"
   get "pack/:id" => "pack#show"
+  get "/settings" => "settings#index"
   get "/" => "card#index"
-  post "hooks" => "hooks#receive"
+  get "product" => "product#index"
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+
+  # Temporary
+  get "cardapi/search" => "api#search"
+  get "cardapi/:set/:id" => "api#show"
+  get "cardapi/:set/:id/:name" => "api#show"
 end

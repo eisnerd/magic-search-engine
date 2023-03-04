@@ -1,3 +1,6 @@
+# This whole list is a mess
+# Maybe I should drop it and trust mtgjson, but I actually rely on these set types for a lot of logic
+
 class PatchSetTypes < Patch
   def call
     each_set do |set|
@@ -24,11 +27,11 @@ class PatchSetTypes < Patch
         set_types << "booster"
       when "s00", "w16", "itp", "cm1"
         set_types << "fixed"
-      when "ugl", "unh", "ust"
+      when "ugl", "unh", "ust", "unf"
         set_types << "un"
       when "tpr"
         set_types << "masters"
-      when "ocmd", /\Aoc\d\d\z/, "cmr"
+      when "ocmd", /\Aoc\d\d\z/, "cmr", "clb"
         set_types << "commander" << "multiplayer"
       when "pwpn", /\Apwp\d+\z/
         set_types << "wpn"
@@ -45,11 +48,18 @@ class PatchSetTypes < Patch
       when "pgtw", /\Apg\d\d\z/
         set_types << "gateway"
       when "fnm", /\Af\d\d\z/, "pdom", "pgrn", "pm19", "prna", "pwar"
-        set_types << "fnm"
+        set_types << "fnm" << "promo"
+      when "q06", "q08"
+        set_types << "pioneer"
+      when "phed", "scd"
+        # OK, technically this is Commander deck, but I really don't want to deal with it
+        set_types = ["box", "promo", "commander"]
+      when "sld", "plist", "pz2", /\Ap...\z/
+        set_types << "promo"
       end
 
       # Some of these are not actually funny sets, just promo sets mixing funny and regular cards (like plist)
-      funny_sets = %W[unh ugl pcel hho parl prel ust pust ppc1 htr htr16 htr17 htr18 htr19 htr20 pal04 h17 j17 tbth tdag tfth thp1 thp2 thp3 ptg cmb1 cmb2 htr18 und punh plist]
+      funny_sets = %W[unh ugl pcel hho parl prel ust pust ppc1 htr htr16 htr17 htr18 htr19 htr20 pal04 h17 j17 tbth tdag tfth thp1 thp2 thp3 ptg cmb1 cmb2 htr18 und punh plist o90p olep p30a uplist phtr ph17 ph18 ph19 ph20 ph21]
       if funny_sets.include?(set_code)
         set_types << "funny"
         set["funny"] = true
@@ -82,9 +92,11 @@ class PatchSetTypes < Patch
 
       case main_set_type
       when "archenemy", "duel deck", "premium deck", "planechase", "box", "deck"
-        set_types << "deck" unless %w[ha1 ha2 ha3].include?(set_code)
+        set_types << "deck" unless %w[ha1 ha2 ha3 ha4 ha5 ha6].include?(set_code)
       when "commander"
-        set_types << "deck" unless set_code == "cm1"
+        set_types << "deck" unless %w[cm1 cc1 cc2].include?(set_code)
+      when "arsenal"
+        set_types << "commander" << "multiplayer"
       end
 
       set["types"] = set_types.sort.uniq

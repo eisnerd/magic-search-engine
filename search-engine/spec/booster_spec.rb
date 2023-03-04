@@ -19,13 +19,13 @@ describe "is:booster" do
     db.sets.each do |set_code, set|
       set_pp = "#{set.name} [#{set.code}]"
       should_have_boosters = (
-        %W[mb1 cmb1 cmb2 cmr].include?(set_code) or (
+        %W[mb1 cmb1 cmb2 cmr dbl clb 30a].include?(set_code) or (
           !(set_types_with_boosters & set.types).empty? and
-          !%W[ced cei tsb itp s00 cp1 cp2 cp3 w16 w17 gk1 ppod ana oana fmb1 anb plist].include?(set.code)
+          !%W[ced cei tsb itp s00 cp1 cp2 cp3 w16 w17 gk1 ppod ana oana fmb1 anb plist slx uplist].include?(set.code)
         )
       )
       should_be_in_other_boosters = (
-        %W[tsb exp mps mp2 fmb1 plist sta].include?(set.code)
+        %W[tsb exp mps mp2 fmb1 plist sta sunf brr].include?(set.code)
       )
       if %W[jmp ajmp].include?(set_code)
         # There are 121 random precon/booster things
@@ -84,7 +84,7 @@ describe "is:booster" do
       when "thb"
         assert_search_equal "e:#{set_code} is:booster", "e:#{set_code} number<=254"
       when "iko"
-        assert_search_equal "e:#{set_code} is:booster", "e:#{set_code} number<=313 -number:275"
+        assert_search_equal "e:#{set_code} is:booster", "e:#{set_code} number<=313 -number:275 -number:275a"
       when "ogw"
         assert_search_equal "e:#{set_code} is:booster", "e:#{set_code} (-t:basic or -number:/a/) -number:/†/"
       when "bfz"
@@ -111,7 +111,7 @@ describe "is:booster" do
       when "tsr"
         assert_search_equal "e:#{set_code} is:booster", "e:#{set_code} number<=410"
       when "stx"
-        assert_search_equal "e:#{set_code} is:booster", "e:#{set_code} number<=275"
+        assert_search_equal "e:#{set_code} is:booster", "e:#{set_code} number<=275 -number:/★/"
       when "sta"
         assert_search_equal "e:#{set_code} is:booster", "e:#{set_code} number<=63 -number:/e/"
       when "mh2"
@@ -120,6 +120,37 @@ describe "is:booster" do
         assert_search_equal "e:#{set_code} is:booster", "e:#{set_code} number<=281 -number:/★/"
       when "mid", "vow"
         assert_search_equal "e:#{set_code} is:booster", "e:#{set_code} number<=277 -number:/†/"
+      when "dbl"
+        assert_search_equal "e:#{set_code} is:booster", "e:#{set_code} number<=534"
+      when "mb1"
+        assert_search_equal "e:#{set_code} is:booster", "e:#{set_code} number<=1694 -number:/†/"
+      when "zen"
+        assert_search_equal "e:#{set_code} is:booster", "e:#{set_code} -number:/a/"
+      when "neo"
+        assert_search_equal "e:#{set_code} is:booster", "e:#{set_code} number<=302"
+      when "snc"
+        assert_search_equal "e:#{set_code} is:booster", "e:#{set_code} number<=281"
+      when "clb"
+        assert_search_equal "e:#{set_code} is:booster", "e:#{set_code} number<=361"
+      when "2x2"
+        assert_search_equal "e:#{set_code} is:booster", "e:#{set_code} number<=331"
+      when "por"
+        assert_search_equal "e:#{set_code} is:booster", "e:#{set_code} -number:/†|s|d/"
+      when "gpt"
+        assert_search_equal "e:#{set_code} is:booster", "e:#{set_code} -number:/★/"
+      when "dmu"
+        assert_search_equal "e:#{set_code} is:booster", "e:#{set_code} number<=281"
+      when "unf"
+        assert_search_equal "e:#{set_code} is:booster", "e:#{set_code} number<=244"
+      when "bro"
+        assert_search_equal "e:#{set_code} is:booster", "e:#{set_code} number<=287 (number<268 or number>=278)"
+      when "ala"
+        # extra card printed decade later
+        assert_search_equal "e:#{set_code} is:booster", "e:#{set_code} number<=249"
+      when "dmr"
+        assert_search_equal "e:#{set_code} is:booster", "e:#{set_code} (number<=261 or (number>=402 number<=411))"
+      when "one"
+        assert_search_equal "e:#{set_code} is:booster", "e:#{set_code} number<=271"
       else
         if set.has_boosters? or set.in_other_boosters?
           assert_search_equal "e:#{set_code} is:booster", "e:#{set_code} -number:/†|s/"

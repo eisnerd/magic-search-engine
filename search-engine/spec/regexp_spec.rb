@@ -41,21 +41,28 @@ describe "Regexp" do
       "Ajani, Mentor of Heroes",
       "As Luck Would Have It",
       "Battle of Wits",
+      "Celebr-8000",
       "Helix Pinnacle",
       "Mox Lotus",
       "Rules Lawyer",
-      "Urza, Academy Headmaster"
+      "Urza, Academy Headmaster",
+      "Vexing Puzzlebox"
   end
 
   it "regexp flavor text" do
-    assert_search_results 'ft:/\d{4,}/ -e:olgc,ovnt',
+    assert_search_results 'ft:/\d{4,}/ -e:olgc,ovnt,pewk',
+      "Aardwolf's Advantage",
+      "Automatic Librarian",
+      "Collector Ouphe",
       "Fervent Champion",
+      "Gilded Lotus",
       "Goblin Secret Agent",
       "Gore Vassal",
       "Invoke the Divine",
       "Mise",
       "Nalathni Dragon",
-      "Remodel"
+      "Remodel",
+      "Spinnerette, Arachnobat"
 
     assert_search_equal 'ft:/ajani/', 'FT:/ajani/'
     assert_search_equal 'ft:/ajani/', 'FT:/AJANI/'
@@ -77,22 +84,26 @@ describe "Regexp" do
       "Asmoranomardicadaistinaculdacar",
       "Circle of Protection: Artifacts",
       "Coax from the Blind Eternities",
+      "Elesh Norn, Mother of Machines",
       "Hanweir, the Writhing Township",
       "Ib Halfheart, Goblin Tactician",
       "Jadar, Ghoulcaller of Nephalia",
       "Kroxa, Titan of Death's Hunger",
+      "Liberator, Urza's Battlethopter",
       "Minamo, School at Water's Edge",
       "Okina, Temple to the Grandfathers",
       "Oviya Pashiri, Sage Lifecrafter",
+      "Sokenzan, Crucible of Defiance",
       "Sunhome, Fortress of the Legion",
       "Tezzeret, Master of the Bridge"
   end
 
   it "regexp rulings text" do
     assert_search_results "rulings:fly",
+      "Devil K. Nevil",
       "Wings of Hubris",
       "Sarah's Wings"
     assert_search_equal "rulings:flying", 'rulings:/\bflying\b/'
-    assert_search_include 'rulings:/\d{6,}/', "Echo Storm"
+    assert_search_include 'rulings:/\d{5,}/', "Bloodletter"
   end
 end

@@ -2,7 +2,7 @@ class CardPrinting
   attr_reader :card, :set, :date, :release_date
   attr_reader :watermark, :artist_name, :multiverseid, :number, :frame, :flavor, :flavor_normalized, :border
   attr_reader :rarity_code, :print_sheet, :oversized, :frame_effects, :foiling, :spotlight
-  attr_reader :textless, :fullart, :buyabox, :flavor_name
+  attr_reader :textless, :fullart, :buyabox, :flavor_name, :nontournament, :acorn
   attr_reader :prices
 
   # Performance cache of derived information
@@ -40,12 +40,15 @@ class CardPrinting
     @rarity_code = %W[basic common uncommon rare mythic special].index(rarity) or raise "Unknown rarity #{rarity}"
     @exclude_from_boosters = data["exclude_from_boosters"]
     @print_sheet = data["print_sheet"]
-    @partner = data["partner"]
+    @partner = data["partner"] # overriden by CardDatabase
+    @others = data["others"] # overriden by CardDatabase
     @oversized = data["oversized"]
+    @nontournament = data["nontournament"]
     @spotlight = data["spotlight"]
     @fullart = data["fullart"]
     @textless = data["textless"]
     @buyabox = data["buyabox"]
+    @acorn = data["acorn"]
 
     @paper = data["paper"]
     @arena = data["arena"]
@@ -120,8 +123,9 @@ class CardPrinting
     display_power display_toughness display_mana_cost
     primary? secondary? front? back? partner? allowed_in_any_number?
     commander? brawler? custom? keywords
+    count_sets count_prints count_papersets count_paperprints name_slug
+    fulltext fulltext_normalized
     min_price_usd
-    count_sets count_prints count_papersets count_paperprints
   ].each do |m|
     eval("def #{m}; @card.#{m}; end")
   end

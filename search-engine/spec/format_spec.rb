@@ -7,9 +7,10 @@ describe "Formats" do
     assert_search_equal "f:standard", "legal:standard"
     assert_search_results "f:extended" # Does not exist according to mtgjson
     assert_search_equal_cards "f:standard",
-      %[e:znr,khm,stx,afr,mid,vow
-      -(Omnath, Locus of Creation)
-    ]
+      %[
+        e:mid,vow,neo,snc,dmu,bro,one
+        -(The Meathook Massacre)
+      ]
     assert_search_equal_cards 'f:"ravnica block"', "e:rav,gp,di"
     assert_search_equal 'f:"ravnica block"', 'legal:"ravnica block"'
     assert_search_equal_cards 'f:"ravnica block"', 'b:ravnica'
@@ -28,6 +29,16 @@ describe "Formats" do
       ]],
     ])
     FormatModern.new.ban_events.should eq([
+      [Date.parse("2022-10-10"),
+        "https://magic.wizards.com/en/articles/archive/news/october-10-2022-banned-and-restricted-announcement",
+      [
+        {name: "Yorion, Sky Nomad", old: "legal", new: "banned"},
+      ]],
+      [Date.parse("2022-03-07"),
+        "https://magic.wizards.com/en/articles/archive/news/march-7-2022-banned-and-restricted-announcement",
+      [
+        {:name=>"Lurrus of the Dream-Den", :new=>"banned", :old=>"legal"},
+      ]],
       [Date.parse("2021-02-15"),
         "https://magic.wizards.com/en/articles/archive/news/february-15-2021-banned-and-restricted-announcement",
       [
@@ -193,8 +204,8 @@ describe "Formats" do
   # We don't have all historical legality for Duel Commander yet,
   # maybe add it at some later point
   it "duel commander" do
-    assert_count_cards 'banned:"duel commander"', 86
-    assert_count_cards 'restricted:"duel commander"', 36
+    assert_count_cards 'banned:"duel commander"', 89
+    assert_count_cards 'restricted:"duel commander"', 28
   end
 
   # Used to be Lurrus
@@ -204,11 +215,11 @@ describe "Formats" do
 
   it "historic" do
     # including STA pre-banned
-    assert_count_cards "banned:historic", 24
+    assert_count_cards "banned:historic", 23
   end
 
   it "premodern" do
-    assert_count_cards "banned:premodern", 32
+    assert_count_cards "banned:premodern", 31
   end
 
   # We don't keep historical legality for Petty Dreadful yet

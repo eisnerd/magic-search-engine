@@ -205,6 +205,7 @@ describe "Card nicknames" do
       "Lavaclaw Reaches",
       "Lumbering Falls",
       "Mishra's Factory",
+      "Mishra's Foundry",
       "Mobilized District",
       "Mutavault",
       "Nantuko Monastery",
@@ -217,7 +218,7 @@ describe "Card nicknames" do
       "Svogthos, the Restless Tomb",
       "Treetop Village",
       "Wandering Fumarole"
-    assert_search_equal "is:manland", "t:land o:becomes o:creature -(Tyrite Sanctum) -(Sorrow's Path)"
+    assert_search_equal "is:manland", "t:land o:becomes o:creature -(Tyrite Sanctum) -(Sorrow's Path) -(Mech Hangar)"
     assert_search_equal "is:manland", "is:creatureland"
   end
 
@@ -304,12 +305,17 @@ describe "Card nicknames" do
   it "is:triome" do
     assert_search_results "is:triome",
       "Indatha Triome",
+      "Jetmir's Garden",
       "Ketria Triome",
+      "Raffine's Tower",
       "Raugrin Triome",
       "Savai Triome",
-      "Zagoth Triome"
+      "Spara's Headquarters",
+      "Xander's Lounge",
+      "Zagoth Triome",
+      "Ziatora's Proving Ground"
     assert_search_equal "is:triome",
-      't:land o:tapped o:cycling triome'
+      't:land o:tapped o:"cycling {3}"'
     assert_search_equal "is:tricycleland", "is:triome"
   end
 
@@ -370,12 +376,15 @@ describe "Card nicknames" do
       "Cairn Wanderer",
       "Concerted Effort",
       "Crystalline Giant",
+      "D00-DL, Caricaturist",
       "Death-Mask Duplicant",
+      "Eater of Virtue",
       "Greater Morphling",
       "Kathril, Aspect Warper",
       "Majestic Myriarch",
       "Odric, Blood-Cursed",
       "Odric, Lunarch Marshal",
+      "Priest of Possibility",
       "Rayami, First of the Fallen",
       "Selective Adaptation",
       "Soulflayer",

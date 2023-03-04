@@ -14,19 +14,19 @@ class CardSheetFactory
     CardSheet.new(sheets.map(&:first), sheets.map{|s,w| s.elements.size * w})
   end
 
-  def from_query(query, assert_count=nil, foil: false, kind: CardSheet, extra: false)
-    cards = find_cards(query, assert_count, foil: foil, extra: extra)
+  def from_query(query, assert_count=nil, foil: false, kind: CardSheet, baseset: false)
+    cards = find_cards(query, assert_count, foil: foil, baseset: baseset)
     kind.new(cards)
   end
 
-  def find_cards(query, assert_count=nil, foil: false, extra: false)
+  def find_cards(query, assert_count=nil, foil: false, baseset: false)
     base_query = "++ is:booster"
     if foil
       base_query += " is:foil"
     else
       base_query += " is:nonfoil"
     end
-    unless extra
+    if baseset
       base_query += " number<=set"
     end
     cards = @db.search("#{base_query} (#{query})").printings.map{|c| PhysicalCard.for(c, foil)}.uniq
@@ -36,12 +36,14 @@ class CardSheetFactory
     cards
   end
 
-  def rarity(set_code, rarity, foil: false, extra: false, kind: CardSheet)
+  def rarity(set_code, rarity, foil: false, baseset: false, kind: CardSheet)
     set = @db.sets[set_code]
     cards = set.physical_cards(foil).select(&:in_boosters?)
     # raise "#{set.code} #{set.same} has no cards in boosters" if cards.empty?
     cards = cards.select{|c| c.rarity == rarity}
-    unless extra
+    # This is really helpful for modelling showcase cards
+    # and we only implemented them for IKO
+    if baseset
       cards = cards.select{|c| c.number.to_i <= c.set.base_set_size }
     end
     # raise "#{set.code} #{set.same} has no #{rarity} cards in boosters" if cards.empty?
@@ -66,6 +68,16 @@ class CardSheetFactory
     CardSheet.new(sheets, weights)
   end
 
+  def emn_foil
+    sheets = [
+      rare_mythic("emn", foil: true),
+      rarity("emn", "uncommon", foil: true),
+      foil_common_or_borrowed_basic("emn", "soi"),
+    ]
+    weights = [3, 5, 12]
+    CardSheet.new(sheets, weights)
+  end
+
   # Masterpieces supposedly are in 1/144 booster (then 1/129 for Amonkhet), and they're presumably equally likely
   # 1:129 rate is not too hard to get, 1:144 is hard
   def foil_or_masterpiece_1_in_144(set_code)
@@ -74,6 +86,28 @@ class CardSheetFactory
       rarity(set_code, "uncommon", foil: true),
       common_or_basic(set_code, foil: true),
       masterpieces_for(set_code),
+    ]
+    weights = [3*8, 5*8, 12*8-2, 5]
+    CardSheet.new(sheets, weights)
+  end
+
+  def ogw_foil_or_masterpiece_1_in_144
+    sheets = [
+      rare_mythic("ogw", foil: true),
+      rarity("ogw", "uncommon", foil: true),
+      foil_common_or_borrowed_basic("ogw", "bfz"),
+      masterpieces_for("ogw"),
+    ]
+    weights = [3*8, 5*8, 12*8-2, 5]
+    CardSheet.new(sheets, weights)
+  end
+
+  def aer_foil_or_masterpiece_1_in_144
+    sheets = [
+      rare_mythic("aer", foil: true),
+      rarity("aer", "uncommon", foil: true),
+      foil_common_or_borrowed_basic("aer", "kld"),
+      masterpieces_for("aer"),
     ]
     weights = [3*8, 5*8, 12*8-2, 5]
     CardSheet.new(sheets, weights)
@@ -106,8 +140,7 @@ class CardSheetFactory
   end
 
   # name backwards as name starts with a number
-  def dedicated_foil_2xm
-    set_code = "2xm"
+  def dedicated_foil_double_masters(set_code)
     sheets = [
       rare_mythic(set_code, foil: true),
       rarity(set_code, "uncommon", foil: true),
@@ -122,7 +155,18 @@ class CardSheetFactory
     sheets = [
       rare_mythic(set_code, foil: true),
       rarity(set_code, "uncommon", foil: true),
-      from_query('e:cmr (r:common or r:special)', 141 + 1, foil: true)
+      from_query("e:#{set_code} (r:common or r:special)", 141 + 1, foil: true)
+    ]
+    weights = [1, 3, 13]
+    CardSheet.new(sheets, weights)
+  end
+
+  def clb_dedicated_foil
+    set_code = "clb"
+    sheets = [
+      rare_mythic(set_code, foil: true),
+      rarity(set_code, "uncommon", foil: true),
+      from_query("e:#{set_code} (r:common or r:special)", 140 + 1, foil: true)
     ]
     weights = [1, 3, 13]
     CardSheet.new(sheets, weights)
@@ -134,6 +178,10 @@ class CardSheetFactory
     cards = cards.select{|c| c.rarity == "basic" or c.rarity == "common"}
     return nil if cards.empty?
     kind.new(cards)
+  end
+
+  def foil_common_or_borrowed_basic(set_code, borrow_set_code)
+    from_query("(r:common e:#{set_code}) or (r:basic e:#{borrow_set_code})", foil: true)
   end
 
   def special(set_code)
@@ -156,6 +204,10 @@ class CardSheetFactory
     rarity(set_code, "uncommon")
   end
 
+  def uncommon_baseset(set_code)
+    rarity(set_code, "uncommon", baseset: true)
+  end
+
   def rare(set_code)
     rarity(set_code, "rare")
   end
@@ -168,6 +220,13 @@ class CardSheetFactory
     mix_sheets(
       [rarity(set_code, "rare", foil: foil), 2],
       [rarity(set_code, "mythic", foil: foil), 1]
+    )
+  end
+
+  def rare_mythic_baseset(set_code, foil: false)
+    mix_sheets(
+      [rarity(set_code, "rare", foil: foil, baseset: true), 2],
+      [rarity(set_code, "mythic", foil: foil, baseset: true), 1]
     )
   end
 
@@ -318,7 +377,7 @@ class CardSheetFactory
 
   def unhinged_foil_rares
     # Super Secret Tech is 141/140
-    from_query("e:unh r>=rare", 40+1, foil: true, extra: true)
+    from_query("e:unh r>=rare", 40+1, foil: true)
   end
 
   def unhinged_foil
@@ -532,8 +591,8 @@ class CardSheetFactory
     )
   end
 
-  # These are legendary creatures only according to maro
-  # not planeswalkers or other legendaries
+  # According to maro, these are legendary creatures, not planeswalkers or other legendaries
+  # For DMU it's officially confirmed https://github.com/taw/magic-sealed-data/issues/24
   def dom_legendary_uncommon
     from_query('e:dom t:"legendary creature" r:uncommon', 20)
   end
@@ -553,6 +612,28 @@ class CardSheetFactory
     mix_sheets(
       [from_query('e:dom -t:"legendary creature" r:rare', 39), 2],
       [from_query('e:dom -t:"legendary creature" r:mythic', 7), 1],
+    )
+  end
+
+  def dmu_legendary_uncommon
+    from_query('e:dmu t:"legendary creature" r:uncommon', 20)
+  end
+
+  def dmu_nonlegendary_uncommon
+    from_query('e:dmu -t:"legendary creature" r:uncommon', 60)
+  end
+
+  def dmu_legendary_rare_mythic
+    mix_sheets(
+      [from_query('e:dmu t:"legendary creature" r:rare', 14), 2],
+      [from_query('e:dmu t:"legendary creature" r:mythic', 7), 1],
+    )
+  end
+
+  def dmu_nonlegendary_rare_mythic
+    mix_sheets(
+      [from_query('e:dmu -t:"legendary creature" r:rare', 46), 2],
+      [from_query('e:dmu -t:"legendary creature" r:mythic', 13), 1],
     )
   end
 
@@ -669,7 +750,7 @@ class CardSheetFactory
     # nonfoil Kaya is not
     mix_sheets(
       [from_query('e:cn2 -t:conspiracy r:rare', 47, foil: foil), 2],
-      [from_query("e:cn2 -t:conspiracy r:mythic #{foilcond}", 12, foil: foil, extra: true), 1],
+      [from_query("e:cn2 -t:conspiracy r:mythic #{foilcond}", 12, foil: foil), 1],
     )
   end
 
@@ -738,7 +819,7 @@ class CardSheetFactory
   end
 
   def bbd_foil_mythic_partner_1
-    from_query("e:bbd r:mythic has:partner (number=255 or number=256)", 2, foil: true, extra: true)
+    from_query("e:bbd r:mythic has:partner (number=255 or number=256)", 2, foil: true)
   end
 
   def bbd_foil_rare_partner_1
@@ -876,6 +957,10 @@ class CardSheetFactory
     from_query("e:#{set_code} r:common -is:gainland", kind: ColorBalancedCardSheet)
   end
 
+  def nongainland_common_baseset(set_code)
+    from_query("e:#{set_code} r:common -is:gainland", baseset: true, kind: ColorBalancedCardSheet)
+  end
+
   def basic_or_common_land(set_code)
     from_query("e:#{set_code} t:land r<=common")
   end
@@ -891,7 +976,7 @@ class CardSheetFactory
   def m21_basic_or_gainland
     # showcase variant which is just as common as any other basic land variation
     mix_sheets(
-      [from_query("e:m21 t:basic", 20, extra: true), 3],
+      [from_query("e:m21 t:basic", 20), 3],
       [from_query("e:m21 is:gainland", 10), 6]
     )
   end
@@ -944,6 +1029,39 @@ class CardSheetFactory
     mix_sheets(
       [from_query('e:cmr -t:legendary r:rare', 52), 2],
       [from_query('e:cmr -t:legendary r:mythic', 17), 1],
+    )
+  end
+
+  def clb_nonlegendary_common
+    from_query('e:clb -t:legendary r:common', 136)
+  end
+
+  def clb_nonlegendary_uncommon
+    from_query('e:clb -t:legendary r:uncommon', 75)
+  end
+
+  def clb_nonlegendary_rare_mythic
+    mix_sheets(
+      [from_query('e:clb -t:"legendary creature" -t:"legendary planeswalker" -t:background r:rare', 47), 2], # legendary land in this slot???
+      [from_query('e:clb -t:legendary r:mythic', 17), 1],
+    )
+  end
+
+  # no idea about ratios
+  def clb_legendary
+    mix_sheets(
+      [from_query('e:clb t:legendary -t:background -t:land r:uncommon', 30), 4],
+      [from_query('e:clb t:legendary -t:background -t:land r:rare', 25), 2],
+      [from_query('e:clb t:legendary -t:background -t:land r:mythic', 5), 1],
+    )
+  end
+
+  # no idea about ratios
+  def clb_background
+    mix_sheets(
+      [from_query('e:clb t:background r:common', 5), 4],
+      [from_query('e:clb t:background r:uncommon', 15), 2],
+      [from_query('e:clb t:background r:rare', 5), 1],
     )
   end
 
@@ -1026,5 +1144,177 @@ class CardSheetFactory
       [from_query('e:mh2 number<262 r:rare', 60), 2],
       [from_query('e:mh2 number<262 r:mythic', 20), 1],
     )
+  end
+
+  def dbl_mid_sfc_common
+    from_query("e:dbl r:common is:sfc number<=267", 90)
+  end
+
+  def dbl_mid_dfc_common
+    from_query("e:dbl r:common is:dfc number<=267", 10)
+  end
+
+  def dbl_mid_sfc_uncommon
+    from_query("e:dbl r:uncommon is:sfc number<=267", 60)
+  end
+
+  def dbl_mid_dfc_uncommon
+    from_query("e:dbl r:uncommon is:dfc number<=267", 23)
+  end
+
+  def dbl_mid_sfc_rare_mythic
+    mix_sheets(
+      [from_query("e:dbl r:rare is:sfc number<=267", 53), 2],
+      [from_query("e:dbl r:mythic is:sfc number<=267", 15), 1],
+    )
+  end
+
+  def dbl_mid_dfc_rare_mythic
+    mix_sheets(
+      [from_query("e:dbl r:rare is:dfc number<=267", 11), 2],
+      [from_query("e:dbl r:mythic is:dfc number<=267", 5), 1],
+    )
+  end
+
+  def dbl_vow_sfc_common
+    from_query("e:dbl r:common is:sfc number>267", 90)
+  end
+
+  def dbl_vow_dfc_common
+    from_query("e:dbl r:common is:dfc number>267", 10)
+  end
+
+  def dbl_vow_sfc_uncommon
+    from_query("e:dbl r:uncommon is:sfc number>267", 60)
+  end
+
+  def dbl_vow_dfc_uncommon
+    from_query("e:dbl r:uncommon is:dfc number>267", 23)
+  end
+
+  def dbl_vow_sfc_rare_mythic
+    mix_sheets(
+      [from_query("e:dbl r:rare is:sfc number>267", 53), 2],
+      [from_query("e:dbl r:mythic is:sfc number>267", 15), 1],
+    )
+  end
+
+  def dbl_vow_dfc_rare_mythic
+    mix_sheets(
+      [from_query("e:dbl r:rare is:dfc number>267", 11), 2],
+      [from_query("e:dbl r:mythic is:dfc number>267", 5), 1],
+    )
+  end
+
+  def neo_dfc_common_uncommon
+    # Guessing the rate. With this rate:
+    # SFC uncommon rarity 3/80
+    # DFC uncommon rarity 3/10 * (1/10) = 3/80
+    # but SFC commons are vastly overrepresented
+    sheets = [
+      from_query("e:neo r:common is:dfc", 6),
+      from_query("e:neo r:uncommon is:dfc", 8),
+    ]
+    CardSheet.new(sheets, [7, 3])
+  end
+
+  def neo_sfc_common
+    from_query("e:neo r:common -is:gainland -is:dfc", kind: ColorBalancedCardSheet)
+  end
+
+  def neo_land
+    from_query("e:neo (r:basic or is:gainland)", 30)
+  end
+
+  def snc_basic
+    mix_sheets(
+      [from_query("e:snc r:basic number<272", 10), 2],
+      [from_query("e:snc r:basic number>=272", 10), 1],
+    )
+  end
+
+  def sunf_sticker
+    from_query("e:sunf t:stickers", 48)
+  end
+
+  def brr_retro_artifact
+    # Officially 1/6 schematc rate
+    # U/R/M rates guessed to be at 4x/2x/1x multiples
+    mix_sheets(
+      [from_query("e:brr ++ number<=63 r:uncommon", 18), 4*5],
+      [from_query("e:brr ++ number<=63 r:rare", 30), 2*5],
+      [from_query("e:brr ++ number<=63 r:mythic", 15), 1*5],
+      [from_query("e:brr ++ number>=64 r:uncommon", 18), 4],
+      [from_query("e:brr ++ number>=64 r:rare", 30), 2],
+      [from_query("e:brr ++ number>=64 r:mythic", 15), 1],
+    )
+  end
+
+  # Just treat BRO+BRR as one set for foiling purposes
+  # This is likely to be inaccurate, but we never get accurate foil rate information anyway
+  def bro_foil
+    sheets = [
+      mix_sheets(
+        [from_query("e:bro,brr r:rare", foil: true), 2],
+        [from_query("e:bro,brr r:mythic", foil: true), 1],
+      ),
+      from_query("e:bro,brr r:uncommon", foil: true),
+      from_query("e:bro,brr r<=common", foil: true),
+    ]
+    weights = [3, 5, 12]
+    CardSheet.new(sheets, weights)
+  end
+
+  # Mech basic officially 1/4 rate
+  # Regular nonfoil basics are not in the packs
+  def bro_mech_basic
+    from_query("e:bro r:basic number>=278", 10)
+  end
+
+  # 30a is not valid identifier
+  def a30_common
+    from_query("e:30a r:common number<=297", 74)
+  end
+
+  def a30_uncommon
+    from_query("e:30a r:uncommon number<=297", 95)
+  end
+
+  # Each dual land has 2x the normal frequency. This is true for both modern frame and retro frame dual lands.
+  def a30_rare
+    mix_sheets(
+      [from_query("e:30a r:rare is:dual number<=297", 10), 2],
+      [from_query("e:30a r:rare -is:dual number<=297", 103), 1],
+    )
+  end
+
+  def a30_basic
+    from_query("e:30a r:basic number<=297", 15)
+  end
+
+  def a30_retro_basic
+    from_query("e:30a r:basic number>297", 15)
+  end
+
+  # We know two things:
+  # - "approximately three out of every ten packs will contain a rare retro frame card"
+  # - "Each dual land has 2x the normal frequency. This is true for both modern frame and retro frame dual lands."
+  # This is not how normal cards (6% rare) or foils (15% rare) work
+  #
+  # But that's not quite saying they're all equally likely (except duals double), as then we'd have 40% rare.
+  # Flat-ish but not totally flat distribution where C/Dual is 2x, U is 1.5x, R is 1x fits the distribution
+  # with rare ratio on 29.7% and very clean numbers.
+  # Yes this means retro dual is as frequent as retro common, which sounds weird
+  def a30_retro
+    mix_sheets(
+      [from_query("e:30a r:common number>297", 74), 4],
+      [from_query("e:30a r:uncommon number>297", 95), 3],
+      [from_query("e:30a r:rare is:dual number>297", 10), 4],
+      [from_query("e:30a r:rare -is:dual number>297", 103), 2],
+    )
+  end
+
+  def one_praetor
+    from_query("(e:neo number:59) or (e:dmu number:107) or (e:snc number:129) or (e:khm number:199)", 4)
   end
 end

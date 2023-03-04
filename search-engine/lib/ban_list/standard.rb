@@ -173,4 +173,18 @@ BanList.for_format("standard") do
     "Lucky Clover" => "banned",
     "Escape to the Wilds" => "banned",
   )
+
+  change(
+    "2022-01-25",
+    "https://magic.wizards.com/en/articles/archive/news/january-25-2022-banned-and-restricted-announcement",
+    "Alrund's Epiphany" => "banned",
+    "Divide by Zero" => "banned",
+    "Faceless Haven" => "banned",
+  )
+
+  change(
+    "2022-10-10",
+    "https://magic.wizards.com/en/articles/archive/news/october-10-2022-banned-and-restricted-announcement",
+    "The Meathook Massacre" => "banned",
+  )
 end
